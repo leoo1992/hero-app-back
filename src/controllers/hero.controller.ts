@@ -28,7 +28,7 @@ export class HeroController {
   }
 
   @Get('search')
-  async findByEmail(@Query('email') email: string): Promise<Hero | undefined> {
+  async findByEmail(@Query('email') email: string): Promise<Hero | null> {
     return this.heroService.findByEmail(email);
   }
 

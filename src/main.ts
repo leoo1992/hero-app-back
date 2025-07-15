@@ -1,20 +1,27 @@
+require('dotenv').config();
+import { Logger, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { I18nMiddleware } from 'nestjs-i18n';
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
+async function bootstrap(): Promise<void> {
+  const logger = new Logger();
+  const app = await NestFactory.create(AppModule, { logger });
+  app.setGlobalPrefix('api');
+  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, 
-      forbidNonWhitelisted: true, 
-      transform: true, 
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
+  app.use(I18nMiddleware);
 
-  app.enableCors();
-  app.setGlobalPrefix('api');
-  await app.listen(process.env.PORT ?? 3000);
+  const config: ConfigService = app.get(ConfigService);
+  await app.listen(config.get('SERVER_PORT') as string);
+  await app.startAllMicroservices();
 }
-bootstrap();
+
+void bootstrap();

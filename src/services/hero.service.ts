@@ -1,72 +1,59 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { HeroDto } from '../dtos/hero.dto';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Hero } from '../entities/hero.entity';
+import { HeroDto } from '../dtos/hero.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class HeroService {
-  private heros: Hero[] = [];
-  private idCounter = 1;
+  constructor(
+    @InjectRepository(Hero)
+    private readonly heroRepository: Repository<Hero>,
+  ) {}
 
   async create(dto: HeroDto): Promise<Hero> {
-    const hashedSenha = await bcrypt.hash(dto.senha, 10);
-    const agora = new Date();
-
-    const hero: Hero = {
-      id: this.idCounter++,
-      nome: dto.nome.toLowerCase(),
-      email: dto.email.toLowerCase().trim(),
-      senha: hashedSenha,
-      hero: dto.hero ?? '',
+    const senhaCriptografada = await bcrypt.hash(dto.senha, 10);
+    const hero = this.heroRepository.create({
+      ...dto,
+      senha: senhaCriptografada,
       acesso: 'HERO',
-      criado: agora,
-      atualizado: agora,
-      projects: [],
-    };
-
-    this.heros.push(hero);
-    return hero;
+      criado: new Date(),
+      atualizado: new Date(),
+    });
+    return this.heroRepository.save(hero);
   }
 
   async findAll(): Promise<Hero[]> {
-    return this.heros;
+    return this.heroRepository.find({ relations: ['projetos'] });
+  }
+
+  async findByEmail(email: string): Promise<Hero | null> {
+    return this.heroRepository.findOne({
+      where: { email: email.toLowerCase().trim() },
+      relations: ['projetos'],
+    });
   }
 
   async findById(id: number): Promise<Hero> {
-    const hero = this.heros.find((h) => h.id === id);
-    if (!hero) throw new NotFoundException('Herói não encontrado');
-    return hero;
-  }
-
-  async findByEmail(email: string): Promise<Hero | undefined> {
-    const targetEmail = email.toLowerCase().trim();
-    const found = this.heros.find((h) => {
-      return h.email === targetEmail;
+    return this.heroRepository.findOneOrFail({
+      where: { id },
+      relations: ['projetos'],
     });
-
-    return found;
   }
 
   async update(id: number, dto: Partial<HeroDto>): Promise<Hero> {
-    const index = this.heros.findIndex((h) => h.id === id);
-    if (index === -1) throw new NotFoundException('Herói não encontrado');
-
-    const atual = this.heros[index];
-    const senha = dto.senha ? await bcrypt.hash(dto.senha, 10) : atual.senha;
-    const atualizado: Hero = {
-      ...atual,
+    const hero = await this.findById(id);
+    const atualizado = {
+      ...hero,
       ...dto,
-      senha,
+      senha: dto.senha ? await bcrypt.hash(dto.senha, 10) : hero.senha,
       atualizado: new Date(),
     };
-
-    this.heros[index] = atualizado;
-    return atualizado;
+    return this.heroRepository.save(atualizado);
   }
 
   async delete(id: number): Promise<void> {
-    const index = this.heros.findIndex((h) => h.id === id);
-    if (index === -1) throw new NotFoundException('Herói não encontrado');
-    this.heros.splice(index, 1);
+    await this.heroRepository.delete(id);
   }
 }
