@@ -9,9 +9,9 @@ import {
   Max,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TProjetoEstatisticas, TProjetoStatus } from '../entities/projeto.entity';
+import { TProjectEstatisticas, TProjectStatus } from '../entities/project.entity';
 
-export class CreateProjetoDto {
+export class CreateProjectDto {
   @IsString()
   @IsNotEmpty()
   nome: string;
@@ -23,18 +23,18 @@ export class CreateProjetoDto {
   @IsEnum(['PENDENTE', 'ANDAMENTO', 'CONCLUIDO'], {
     message: 'status deve ser PENDENTE, ANDAMENTO ou CONCLUIDO',
   })
-  status: TProjetoStatus;
+  status: TProjectStatus;
 
   @IsObject()
   @ValidateNested()
   @Type(() => EstatisticasDto)
-  estatisticas: TProjetoEstatisticas;
+  estatisticas: TProjectEstatisticas;
 
   @IsInt()
   responsavel: number;
 }
 
-class EstatisticasDto implements TProjetoEstatisticas {
+class EstatisticasDto implements TProjectEstatisticas {
   @IsInt()
   @Min(0)
   @Max(100)

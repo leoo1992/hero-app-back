@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { HeroiService } from './heroi.service';
+import { HeroService } from './hero.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from 'src/dtos/login.dto';
@@ -7,28 +7,20 @@ import { LoginDto } from 'src/dtos/login.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly heroiService: HeroiService,
+    private readonly heroService: HeroService,
     private readonly jwtService: JwtService,
   ) {}
 
   async login(dto: LoginDto) {
-    
-    const heroi = await this.heroiService.findByEmail(dto.email.toLowerCase().trim());
+    const hero = await this.heroService.findByEmail(dto.email.toLowerCase().trim());
 
-    console.log('encontrado :', heroi);
+    if (!hero) throw new UnauthorizedException('Email ou senha inválidos');
 
-    if (!heroi) throw new UnauthorizedException('Email ou senha inválidos');
-
-    console.log('Senha enviada:', dto.senha);
-    console.log('Senha salva (hash):', heroi.senha);
-
-    const senhaValida = await bcrypt.compare(dto.senha, heroi.senha);
-
-    console.log('Senha válida?', senhaValida);
+    const senhaValida = await bcrypt.compare(dto.senha, hero.senha);
 
     if (!senhaValida) throw new UnauthorizedException('Email ou senha inválidos');
 
-    const payload = { sub: heroi.id, email: heroi.email, nome: heroi.nome };
+    const payload = { sub: hero.id, email: hero.email, nome: hero.nome };
     const token = this.jwtService.sign(payload);
 
     return { access_token: token };

@@ -1,12 +1,6 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
-export class CreateHeroiDto {
+export class HeroDto {
   @IsNotEmpty()
   @IsString()
   nome: string;

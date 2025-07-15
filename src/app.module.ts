@@ -1,13 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './modules/auth.module';  // caminho correto?
-import { HeroiModule } from './modules/heroi.module';
-import { ProjetoModule } from './modules/projeto.module';
+import { AuthModule } from './modules/auth.module';
+import { HeroModule } from './modules/hero.module';
+import { ProjectModule } from './modules/project.module';
 
 @Module({
-  imports: [
-    AuthModule,
-    HeroiModule,
-    ProjetoModule
-  ],
+  imports: [AuthModule, HeroModule, ProjectModule],
 })
 export class AppModule {}

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from '../controllers/auth.controller';
 import { AuthService } from '../services/auth.service';
-import { HeroiModule } from './heroi.module';
+import { HeroModule } from './hero.module';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
@@ -10,7 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_SECRET || 'segredo-super-secreto',
       signOptions: { expiresIn: '1h' },
     }),
-    HeroiModule,
+    HeroModule,
   ],
   providers: [AuthService],
   controllers: [AuthController],

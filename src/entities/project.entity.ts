@@ -7,11 +7,11 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Heroi } from './heroi.entity';
+import { Hero } from './hero.entity';
 
-export type TProjetoStatus = 'PENDENTE' | 'ANDAMENTO' | 'CONCLUIDO';
+export type TProjectStatus = 'PENDENTE' | 'ANDAMENTO' | 'CONCLUIDO';
 
-export interface TProjetoEstatisticas {
+export interface TProjectEstatisticas {
   agilidade: number;
   encantamento: number;
   eficiencia: number;
@@ -20,8 +20,8 @@ export interface TProjetoEstatisticas {
   ambicao: number;
 }
 
-@Entity('projetos')
-export class Projeto {
+@Entity('projects')
+export class Project {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -32,14 +32,14 @@ export class Projeto {
   descricao: string;
 
   @Column({ type: 'varchar', length: 20 })
-  status: TProjetoStatus;
+  status: TProjectStatus;
 
   @Column({ type: 'json' })
-  estatisticas: TProjetoEstatisticas;
+  estatisticas: TProjectEstatisticas;
 
-  @ManyToOne(() => Heroi, { nullable: false })
+  @ManyToOne(() => Hero, { nullable: false })
   @JoinColumn({ name: 'responsavel' })
-  responsavel: Heroi;
+  responsavel: Hero;
 
   @CreateDateColumn()
   criado: Date;

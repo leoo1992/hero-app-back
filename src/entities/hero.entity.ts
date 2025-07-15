@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Projeto } from './projeto.entity';
+import { Project } from './project.entity';
 
-@Entity('herois')
-export class Heroi {
+@Entity('heros')
+export class Hero {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -27,6 +27,6 @@ export class Heroi {
   @Column({ type: 'timestamp', nullable: true })
   atualizado: Date;
 
-  @OneToMany(() => Projeto, (projeto) => projeto.responsavel)
-  projetos: Projeto[];
+  @OneToMany(() => Project, (project) => project.responsavel)
+  projects: Project[];
 }
