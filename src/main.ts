@@ -4,9 +4,11 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { I18nMiddleware } from 'nestjs-i18n';
+import { seedAdmin } from './seeds/admin.seed';
 
 async function bootstrap(): Promise<void> {
   const logger = new Logger();
+  await seedAdmin();
   const app = await NestFactory.create(AppModule, { logger });
   app.setGlobalPrefix('api');
   app.enableCors();
