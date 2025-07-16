@@ -11,7 +11,7 @@ import {
 import { Type } from 'class-transformer';
 import { TProjectEstatisticas, TProjectStatus } from '../entities/project.entity';
 
-export class CreateProjectDto {
+export class ProjectDto {
   @IsString()
   @IsNotEmpty()
   nome: string;

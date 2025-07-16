@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Delete, ParseIntPipe } from '@nestjs/common';
 import { ProjectService } from '../services/project.service';
-import { CreateProjectDto } from '../dtos/project.dto';
+import { ProjectDto } from '../dtos/project.dto';
 import { Project } from '../entities/project.entity';
 
 @Controller('projects')
@@ -8,7 +8,7 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  async create(@Body() dto: CreateProjectDto): Promise<Project> {
+  async create(@Body() dto: ProjectDto): Promise<Project> {
     return this.projectService.create(dto);
   }
 
@@ -25,7 +25,7 @@ export class ProjectController {
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: Partial<CreateProjectDto>,
+    @Body() dto: Partial<ProjectDto>,
   ): Promise<Project> {
     return this.projectService.update(id, dto);
   }

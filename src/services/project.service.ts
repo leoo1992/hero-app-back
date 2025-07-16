@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Project } from '../entities/project.entity';
-import { CreateProjectDto } from '../dtos/project.dto';
+import { ProjectDto } from '../dtos/project.dto';
 import { HeroService } from './hero.service';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class ProjectService {
 
   constructor(private readonly heroService: HeroService) {}
 
-  async create(dto: CreateProjectDto): Promise<Project> {
+  async create(dto: ProjectDto): Promise<Project> {
     if (!dto.responsavel) {
       throw new NotFoundException('Responsável é obrigatório');
     }
@@ -45,7 +45,7 @@ export class ProjectService {
     return project;
   }
 
-  async update(id: number, dto: Partial<CreateProjectDto>): Promise<Project> {
+  async update(id: number, dto: Partial<ProjectDto>): Promise<Project> {
     const index = this.projects.findIndex((p) => p.id === id);
     if (index === -1) throw new NotFoundException('Project não encontrado');
 
