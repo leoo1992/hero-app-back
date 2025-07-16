@@ -25,20 +25,20 @@ export class HeroService {
   }
 
   async findAll(): Promise<Hero[]> {
-    return this.heroRepository.find({ relations: ['projetos'] });
+    return this.heroRepository.find({ relations: ['projects'] });
   }
 
   async findByEmail(email: string): Promise<Hero | null> {
     return this.heroRepository.findOne({
       where: { email: email.toLowerCase().trim() },
-      relations: ['projetos'],
+      relations: ['projects'],
     });
   }
 
   async findById(id: number): Promise<Hero> {
     return this.heroRepository.findOneOrFail({
       where: { id },
-      relations: ['projetos'],
+      relations: ['projects'],
     });
   }
 
