@@ -1,0 +1,416 @@
+type: collection.insomnia.rest/5.0
+name: Scratch Pad
+meta:
+  id: wrk_scratchpad
+  created: 1713740298349
+  modified: 1713740298349
+  description: ""
+collection:
+  - name: HERO
+    meta:
+      id: fld_9f60cfdbaa8d4864befd91ce3adcb261
+      created: 1752625045977
+      modified: 1752625045977
+      sortKey: -1752625045977
+      description: ""
+    children:
+      - url: http://localhost:3000/api/hero/
+        name: GET
+        meta:
+          id: req_aafccb40b8494d69ad636cdc6d6275d7
+          created: 1752464607362
+          modified: 1752629205974
+          isPrivate: false
+          description: ""
+          sortKey: -1752625051109
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/10.3.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/hero/
+        name: CREATE
+        meta:
+          id: req_0766bf08bbd34a1f9a9dbdc1d77aecdb
+          created: 1752465526895
+          modified: 1752629364662
+          isPrivate: false
+          description: ""
+          sortKey: -1752625125468
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"nome": "leonardo",
+            	"email": "exemplo@teste.com",
+            	"senha": "123456",
+            	"hero": "Batman"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/10.3.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/hero/search/email
+        name: SEARCH byEMAIL
+        meta:
+          id: req_62c98bd4254344a8b2a189b2e49aef54
+          created: 1752466943713
+          modified: 1752627943330
+          isPrivate: false
+          description: ""
+          sortKey: -1752625050934
+        method: GET
+        parameters:
+          - name: email
+            value: admin@heroforce.com
+            id: pair_f47a63afd63743b2b91ac08ea1e7af61
+        headers:
+          - name: User-Agent
+            value: insomnia/10.3.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/hero/3
+        name: GET ID
+        meta:
+          id: req_3508dc2c46474ee49b8e808be8c225ea
+          created: 1752625059821
+          modified: 1752629359302
+          isPrivate: false
+          description: ""
+          sortKey: -1752625051084
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.3.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/hero/2
+        name: DELETE
+        meta:
+          id: req_e54e855faf074942932d9cb592efb785
+          created: 1752625122537
+          modified: 1752625259922
+          isPrivate: false
+          description: ""
+          sortKey: -1752625122537
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.3.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/hero/3
+        name: UPDATE
+        meta:
+          id: req_07e53da419b94af382ced2460ec99a8e
+          created: 1752625125368
+          modified: 1752626732890
+          isPrivate: false
+          description: ""
+          sortKey: -1752625125368
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "nome": "Leonardo Santos Atualizado",
+              "hero": "Superman",
+              "projects": [
+                {
+                  "nome": "Projeto Metropolis",
+                  "descricao": "Defesa da cidade de Metropolis",
+                  "status": "PENDENTE",
+                  "estatisticas": {
+                    "agilidade": 80,
+                    "encantamento": 90,
+                    "eficiencia": 85,
+                    "excelencia": 87,
+                    "transparencia": 75,
+                    "ambicao": 89
+                  },
+                  "responsavel": 1
+                }
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.3.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/hero?status=PENDENTE
+        name: SEARCH STATUS
+        meta:
+          id: req_770d42c598b841659721c0ddf94d5584
+          created: 1752629227771
+          modified: 1752629271392
+          isPrivate: false
+          description: ""
+          sortKey: -1752625051059
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/10.3.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/hero?hero=Superman
+        name: SEARCH BYHERO
+        meta:
+          id: req_1818c564343446edbec8e52029475e42
+          created: 1752629297796
+          modified: 1752629328583
+          isPrivate: false
+          description: ""
+          sortKey: -1752625051034
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/10.3.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: AUTH
+    meta:
+      id: fld_9b3e406099bc468980e5ced89c0598b5
+      created: 1752625112135
+      modified: 1752625112135
+      sortKey: -1752625112135
+      description: ""
+    children:
+      - url: http://localhost:3000/api/auth/login
+        name: LOGIN
+        meta:
+          id: req_98b0eb86042e4a29a3d2d24cdcb2e7bb
+          created: 1739413916960
+          modified: 1752627037335
+          isPrivate: false
+          description: ""
+          sortKey: -1752627037304
+        method: POST
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "email": "admin@heroforce.com",
+              "senha": "admin123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/10.1.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: PROJECT
+    meta:
+      id: fld_e02cbe4b86b64324a21c5a2e707cb0eb
+      created: 1752626877500
+      modified: 1752626877500
+      sortKey: -1752626877500
+      description: ""
+    children:
+      - url: http://localhost:3000/api/projects
+        name: UPDATE
+        meta:
+          id: req_a927fae3fdd74ca8b0f2c44f01494081
+          created: 1752627054345
+          modified: 1752629375278
+          isPrivate: false
+          description: ""
+          sortKey: -1752627188229
+        method: POST
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "nome": "Projeto Veloz",
+              "descricao": "Projeto para análise de desempenho",
+              "status": "PENDENTE",
+              "estatisticas": {
+                "agilidade": 90,
+                "encantamento": 75,
+                "eficiencia": 80,
+                "excelencia": 85,
+                "transparencia": 70,
+                "ambicao": 95
+              },
+              "responsavel": 3
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.3.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/projects
+        name: GET ID
+        meta:
+          id: req_31b547b6247444f1bd53272386e4253b
+          created: 1752627132700
+          modified: 1752627274017
+          isPrivate: false
+          description: ""
+          sortKey: -1752627132700
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.3.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/projects/1
+        name: GET
+        meta:
+          id: req_c016e4e7c67146deb0c2cea3e02ec8a7
+          created: 1752627159240
+          modified: 1752627264850
+          isPrivate: false
+          description: ""
+          sortKey: -1752627159240
+        method: GET
+        headers:
+          - name: User-Agent
+            value: insomnia/11.3.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/projects/1
+        name: UPDATE
+        meta:
+          id: req_22f0d0a1f5944446a72d450642f338c4
+          created: 1752627188029
+          modified: 1752629377635
+          isPrivate: false
+          description: ""
+          sortKey: -1752627188179
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |
+            {
+              "nome": "Projeto Atualizado",
+              "status": "CONCLUIDO"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.3.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3000/api/projects/1
+        name: DELETE
+        meta:
+          id: req_305734c7a348441eaad35b656286adfa
+          created: 1752627223579
+          modified: 1752627247999
+          isPrivate: false
+          description: ""
+          sortKey: -1752627188129
+        method: DELETE
+        headers:
+          - name: User-Agent
+            value: insomnia/11.3.0
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1728602533500
+    modified: 1728602533500
+environments:
+  name: Base Environment
+  meta:
+    id: env_99d30891da4bdcebc63947a8fc17f076de878684
+    created: 1728602533430
+    modified: 1728602533430
+    isPrivate: false
