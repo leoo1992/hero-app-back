@@ -1,27 +1,19 @@
+import { IsEmail, IsOptional, IsString, MinLength, ValidateNested, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MinLength,
-  ValidateNested,
-} from 'class-validator';
 import { ProjectDto } from './project.dto';
 
-export class HeroDto {
-  @IsNotEmpty()
+export class UpdateHeroDto {
+  @IsOptional()
   @IsString()
-  nome: string;
+  nome?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @MinLength(6)
-  senha: string;
+  senha?: string;
 
   @IsOptional()
   @IsString()

@@ -12,6 +12,7 @@ import {
 import { HeroService } from '../services/hero.service';
 import { HeroDto } from '../dtos/hero.dto';
 import { Hero } from '../entities/hero.entity';
+import { UpdateHeroDto } from 'src/dtos/updateHero.dto';
 
 @Controller('hero')
 export class HeroController {
@@ -22,15 +23,19 @@ export class HeroController {
     return this.heroService.create(dto);
   }
 
-  @Get()
-  async findAll(): Promise<Hero[]> {
-    return this.heroService.findAll();
-  }
-
-  @Get('search')
+  @Get('search/email')
   async findByEmail(@Query('email') email: string): Promise<Hero | null> {
     return this.heroService.findByEmail(email);
   }
+
+@Get()
+async findAll(
+  @Query('status') status?: string,
+  @Query('hero') hero?: string,
+): Promise<Hero[]> {
+  return this.heroService.findWithFilters(status, hero);
+}
+
 
   @Get(':id')
   async findById(@Param('id', ParseIntPipe) id: number): Promise<Hero> {
@@ -38,10 +43,7 @@ export class HeroController {
   }
 
   @Put(':id')
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: Partial<HeroDto>,
-  ): Promise<Hero> {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateHeroDto): Promise<Hero> {
     return this.heroService.update(id, dto);
   }
 
