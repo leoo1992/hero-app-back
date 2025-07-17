@@ -1,17 +1,36 @@
 require('dotenv').config();
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { I18nMiddleware } from 'nestjs-i18n';
 import { seedAdmin } from './seeds/admin.seed';
+import { ConfigService } from '@nestjs/config';
+import helmet from '@fastify/helmet';
+import csrf from '@fastify/csrf-protection';
+import cookie from '@fastify/cookie';
+
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 
 async function bootstrap(): Promise<void> {
   const logger = new Logger();
   await seedAdmin();
-  const app = await NestFactory.create(AppModule, { logger });
+
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+    { logger },
+  );
+
+  const configService = app.get(ConfigService);
+
   app.setGlobalPrefix('api');
-  app.enableCors();
+  app.enableCors({
+    origin: configService.get('CLIENT_ORIGIN'),
+    credentials: true,
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -19,11 +38,19 @@ async function bootstrap(): Promise<void> {
       transform: true,
     }),
   );
-  app.use(I18nMiddleware);
 
-  const config: ConfigService = app.get(ConfigService);
-  await app.listen(config.get('SERVER_PORT') as string);
-  await app.startAllMicroservices();
+  await app.register(cookie, {
+    secret: process.env.COOKIE_SECRET,
+    parseOptions: {},
+  });
+
+  await app.register(helmet, {
+    contentSecurityPolicy: false,
+  });
+
+  await app.register(csrf);
+
+  const port = configService.get('SERVER_PORT') || 3000;
+  await app.listen(port, '0.0.0.0');
 }
-
 void bootstrap();
