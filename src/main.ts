@@ -54,8 +54,6 @@ async function bootstrap(): Promise<void> {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  document.components?.schemas && delete document.components.schemas.Hero;
-  document.components?.schemas && delete document.components.schemas.Project;
 
   SwaggerModule.setup('api/docs', app, document);
 
