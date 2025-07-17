@@ -1,14 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Project } from '../entities/project.entity';
 import { ProjectDto } from '../dtos/project.dto';
 import { HeroService } from './hero.service';
 
 @Injectable()
 export class ProjectService {
-  private projects: Project[] = [];
-  private idCounter = 1;
+  constructor(
+    @InjectRepository(Project)
+    private readonly projectRepository: Repository<Project>,
 
-  constructor(private readonly heroService: HeroService) {}
+    private readonly heroService: HeroService,
+  ) {}
 
   async create(dto: ProjectDto): Promise<Project> {
     if (!dto.responsavel) {
@@ -20,8 +24,7 @@ export class ProjectService {
       throw new NotFoundException('Herói responsável não encontrado');
     }
 
-    const project: Project = {
-      id: this.idCounter++,
+    const project = this.projectRepository.create({
       nome: dto.nome,
       descricao: dto.descricao,
       status: dto.status,
@@ -29,48 +32,60 @@ export class ProjectService {
       responsavel,
       criado: new Date(),
       atualizado: new Date(),
-    };
+    });
 
-    this.projects.push(project);
-    return project;
+    return this.projectRepository.save(project);
+  }
+
+  async findWithFilters(status?: string, responsavelId?: number): Promise<Project[]> {
+    const query = this.projectRepository.createQueryBuilder('project')
+      .leftJoinAndSelect('project.responsavel', 'responsavel');
+
+    if (status) {
+      query.andWhere('project.status = :status', { status });
+    }
+
+    if (responsavelId) {
+      query.andWhere('responsavel.id = :responsavelId', { responsavelId });
+    }
+
+    return query.getMany();
   }
 
   async findAll(): Promise<Project[]> {
-    return this.projects;
+    return this.projectRepository.find({ relations: ['responsavel'] });
   }
 
   async findById(id: number): Promise<Project> {
-    const project = this.projects.find((p) => p.id === id);
+    const project = await this.projectRepository.findOne({
+      where: { id },
+      relations: ['responsavel'],
+    });
     if (!project) throw new NotFoundException('Project não encontrado');
     return project;
   }
 
   async update(id: number, dto: Partial<ProjectDto>): Promise<Project> {
-    const index = this.projects.findIndex((p) => p.id === id);
-    if (index === -1) throw new NotFoundException('Project não encontrado');
+    const project = await this.findById(id);
 
-    const atual = this.projects[index];
+    if (dto.responsavel) {
+      const responsavel = await this.heroService.findById(dto.responsavel);
+      if (!responsavel) throw new NotFoundException('Herói responsável não encontrado');
+      project.responsavel = responsavel;
+    }
 
-    const responsavel = dto.responsavel
-      ? await this.heroService.findById(dto.responsavel)
-      : atual.responsavel;
+    if (dto.nome !== undefined) project.nome = dto.nome;
+    if (dto.descricao !== undefined) project.descricao = dto.descricao;
+    if (dto.status !== undefined) project.status = dto.status;
+    if (dto.estatisticas !== undefined) project.estatisticas = { ...dto.estatisticas };
 
-    const atualizado: Project = {
-      ...atual,
-      ...dto,
-      estatisticas: dto.estatisticas ? { ...dto.estatisticas } : atual.estatisticas,
-      responsavel,
-      atualizado: new Date(),
-    };
+    project.atualizado = new Date();
 
-    this.projects[index] = atualizado;
-    return atualizado;
+    return this.projectRepository.save(project);
   }
 
   async delete(id: number): Promise<void> {
-    const index = this.projects.findIndex((p) => p.id === id);
-    if (index === -1) throw new NotFoundException('Project não encontrado');
-
-    this.projects.splice(index, 1);
+    const result = await this.projectRepository.delete(id);
+    if (result.affected === 0) throw new NotFoundException('Project não encontrado');
   }
 }

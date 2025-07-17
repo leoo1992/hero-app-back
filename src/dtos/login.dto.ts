@@ -6,7 +6,7 @@ export class LoginDto {
   @IsEmail({}, { message: 'Email inválido' })
   email: string;
 
-  @ApiProperty({ example: 'senha123' })
+  @ApiProperty({ example: 'admin123' })
   @IsString()
   @IsNotEmpty({ message: 'Senha não pode estar vazia' })
   senha: string;
