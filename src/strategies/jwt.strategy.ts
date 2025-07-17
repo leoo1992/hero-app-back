@@ -9,6 +9,7 @@ type JwtPayload = {
   sub: number;
   email: string;
   nome: string;
+  acesso: 'ADMIN' | 'HERO';
   iat: number;
   exp: number;
 };
