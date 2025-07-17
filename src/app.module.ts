@@ -4,12 +4,22 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HeroModule } from './modules/hero.module';
 import { ProjectModule } from './modules/project.module';
 import { AuthModule } from './modules/auth.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
+    }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60,
+          limit: 30,
+        },
+      ],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule, HeroModule, ProjectModule, AuthModule],
@@ -27,6 +37,12 @@ import { AuthModule } from './modules/auth.module';
       },
       inject: [ConfigService],
     }),
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}
