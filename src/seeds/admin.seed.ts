@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { Hero } from '../entities/hero.entity';
 import { Project } from '../entities/project.entity';
 import * as bcrypt from 'bcrypt';
+import { Logger } from '@nestjs/common';
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -15,25 +16,32 @@ const AppDataSource = new DataSource({
   entities: [Hero, Project],
 });
 
+const logger = new Logger('SeedAdmin');
+
 export async function seedAdmin() {
-  await AppDataSource.initialize();
-  const heroRepository = AppDataSource.getRepository(Hero);
-  const exists = await heroRepository.findOneBy({ email: 'admin@heroforce.com' });
+  try {
+    await AppDataSource.initialize();
+    const heroRepository = AppDataSource.getRepository(Hero);
 
-  if (!exists) {
-    const admin = new Hero();
-    admin.nome = 'Admin';
-    admin.email = 'admin@heroforce.com';
-    admin.senha = await bcrypt.hash('admin123', 10);
-    admin.acesso = 'ADMIN';
-    admin.criado = new Date();
-    admin.atualizado = new Date();
+    const exists = await heroRepository.findOneBy({ email: 'admin@heroforce.com' });
 
-    await heroRepository.save(admin);
-    console.log('Usuário ADMIN criado.');
-  } else {
-    console.log('Usuário ADMIN já existe.');
+    if (!exists) {
+      const admin = new Hero();
+      admin.nome = 'Admin';
+      admin.email = 'admin@heroforce.com';
+      admin.senha = await bcrypt.hash('admin123', 10);
+      admin.acesso = 'ADMIN';
+      admin.criado = new Date();
+      admin.atualizado = new Date();
+
+      await heroRepository.save(admin);
+      logger.warn('Usuário ADMIN criado.');
+    } else {
+      logger.warn('Usuário ADMIN já existe.');
+    }
+  } catch (error) {
+    logger.error('Erro ao executar seedAdmin:', error);
+  } finally {
+    await AppDataSource.destroy();
   }
-
-  await AppDataSource.destroy();
 }
