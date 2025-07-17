@@ -38,7 +38,8 @@ export class ProjectService {
   }
 
   async findWithFilters(status?: string, responsavelId?: number): Promise<Project[]> {
-    const query = this.projectRepository.createQueryBuilder('project')
+    const query = this.projectRepository
+      .createQueryBuilder('project')
       .leftJoinAndSelect('project.responsavel', 'responsavel');
 
     if (status) {

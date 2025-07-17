@@ -8,9 +8,9 @@ import { JwtBlacklistGuard } from 'src/guards/jwt-blacklist.guard';
 import { AuthModule } from './auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Hero, Project]),  forwardRef(() => AuthModule)],
+  imports: [TypeOrmModule.forFeature([Hero, Project]), forwardRef(() => AuthModule)],
   controllers: [HeroController],
-  providers: [HeroService,JwtBlacklistGuard],
+  providers: [HeroService, JwtBlacklistGuard],
   exports: [HeroService],
 })
 export class HeroModule {}
