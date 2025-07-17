@@ -1,8 +1,20 @@
-import { Body, Controller, Get, Param, Post, Put, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Delete,
+  ParseIntPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { ProjectService } from '../services/project.service';
 import { ProjectDto } from '../dtos/project.dto';
 import { Project } from '../entities/project.entity';
+import { JwtBlacklistGuard } from '../guards/jwt-blacklist.guard';
 
+@UseGuards(JwtBlacklistGuard)
 @Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
