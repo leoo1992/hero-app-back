@@ -15,7 +15,9 @@ import { HeroDto } from '../dtos/hero.dto';
 import { Hero } from '../entities/hero.entity';
 import { UpdateHeroDto } from 'src/dtos/updateHero.dto';
 import { JwtBlacklistGuard } from '../guards/jwt-blacklist.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Heróis')
 @Controller('hero')
 export class HeroController {
   constructor(private readonly heroService: HeroService) {}

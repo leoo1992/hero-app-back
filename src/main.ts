@@ -7,21 +7,17 @@ import { ConfigService } from '@nestjs/config';
 import helmet from '@fastify/helmet';
 import csrf from '@fastify/csrf-protection';
 import cookie from '@fastify/cookie';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 async function bootstrap(): Promise<void> {
   const logger = new Logger();
   await seedAdmin();
 
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter(),
-    { logger },
-  );
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
+    logger,
+  });
 
   const configService = app.get(ConfigService);
 
@@ -49,6 +45,19 @@ async function bootstrap(): Promise<void> {
   });
 
   await app.register(csrf);
+
+  const config = new DocumentBuilder()
+    .setTitle('API HeroForce')
+    .setDescription('Documentação da API HeroForce')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  document.components?.schemas && delete document.components.schemas.Hero;
+  document.components?.schemas && delete document.components.schemas.Project;
+
+  SwaggerModule.setup('api/docs', app, document);
 
   const port = configService.get('SERVER_PORT') || 3000;
   await app.listen(port, '0.0.0.0');

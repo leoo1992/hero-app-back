@@ -3,7 +3,9 @@ import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dtos/login.dto';
 import { Request, Response } from 'express';
 import { JwtBlacklistService } from '../services/jwt-blacklist.service';
+import { ApiTags, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
@@ -13,6 +15,18 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @ApiOperation({ summary: 'Login do usuário' })
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Tokens gerados com sucesso',
+    schema: {
+      example: {
+        access_token: 'jwt-access-token',
+        refresh_token: 'jwt-refresh-token',
+      },
+    },
+  })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const { accessToken, refreshToken } = await this.authService.login(dto);
 
@@ -27,6 +41,20 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @ApiOperation({ summary: 'Renova o access token usando o refresh token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Novo access token gerado',
+    schema: {
+      example: {
+        access_token: 'new-jwt-access-token',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Refresh token ausente ou inválido',
+  })
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies['refresh_token'];
 
@@ -45,6 +73,14 @@ export class AuthController {
   }
 
   @Post('logout')
+  @ApiOperation({ summary: 'Logout do usuário, invalidando tokens' })
+  @ApiResponse({
+    status: 200,
+    description: 'Logout realizado com sucesso',
+    schema: {
+      example: { message: 'Logout realizado com sucesso' },
+    },
+  })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     res.clearCookie('refresh_token', {
       httpOnly: true,

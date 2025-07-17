@@ -1,32 +1,38 @@
-import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsArray,
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
   IsString,
+  IsNotEmpty,
+  IsEmail,
   MinLength,
+  IsOptional,
+  IsArray,
   ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ProjectDto } from './project.dto';
 
 export class HeroDto {
-  @IsNotEmpty()
+  @ApiProperty({ example: 'Lucas Silva' })
   @IsString()
+  @IsNotEmpty()
   nome: string;
 
-  @IsNotEmpty()
+  @ApiProperty({ example: 'lucas@email.com' })
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
-  @IsNotEmpty()
+  @ApiProperty({ example: '12345678', minLength: 6 })
+  @IsString()
   @MinLength(6)
   senha: string;
 
+  @ApiProperty({ required: false, example: 'Super Herói' })
   @IsOptional()
   @IsString()
   hero?: string;
 
+  @ApiProperty({ type: [ProjectDto], required: false })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
