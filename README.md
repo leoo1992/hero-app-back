@@ -1,98 +1,123 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🦸‍♂️ Hero App Backend (hero-app-back)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Uma aplicação backend robusta e escalável para o aplicativo Hero.  Construída com foco em segurança, performance e facilidade de manutenção.
+Este projeto fornece a infraestrutura de dados e APIs necessárias para alimentar a aplicação front-end.
 
-## Description
+## 🚀 Tecnologias
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Este projeto utiliza as seguintes tecnologias:
 
-## Project setup
+* **Framework:** [NestJS](https://nestjs.com/)
+* **Banco de Dados:** [PostgreSQL](https://www.postgresql.org/)
+* **ORM:** [TypeORM](https://typeorm.io/)
+* **Autenticação:** [JWT](https://jwt.io/)
+* **Documentação:** [Swagger](https://swagger.io/)
+* **Container:** [Docker](https://www.docker.com/)
+* **Linguagem:** TypeScript
 
-```bash
-$ npm install
-```
+**Pré-requisitos:**
+   * Docker e Docker Compose instalados e funcionando.
+   * Node 18+
+   * npm v9+ 
 
-## Compile and run the project
+## ⚙️ Instalação e Configuração
+
+1. **Clone o repositório:**
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/leoo1992/hero-app-back
+cd hero-app-back
 ```
 
-## Run tests
+2. **Instale as dependências:**
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
+## 🏃 Executando o Projeto
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+1. **Execute o servidor:**
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+3. **Construindo e Executando com Docker Compose:**
 
-## Resources
+```bash
+docker-compose up -d --build
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+3. **O .env está exposto**
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 📁 Estrutura de Arquivos
+```
+hero-app-back/
+├── Insomnia.yaml
+├── README.md
+├── docker-compose.yml
+├── eslint.config.mjs
+├── nest-cli.json
+├── package-lock.json
+├── package.json
+├── src/
+├── tsconfig.build.json
+└── tsconfig.json
+```
 
-## Support
+## Estrutura base de Arquivos
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```
+src/
+├── controllers/       // Controladores das rotas da API
+│   └── ...
+├── modules/            // Modelos de dados
+│   └── ...
+├── services/          // Lógica de negócio
 
-## Stay in touch
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## ✨ Recursos
 
-## License
+- ✅ Autenticação JWT segura  
+- ✅ CRUD completo para heróis  
+- ✅ Sistema de batalhas entre heróis  
+- ✅ Relatórios e estatísticas  
+- ✅ Documentação de API com Swagger  
+- ✅ Testes automatizados  
+- ✅ Migrações de banco de dados  
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+## 📚 Documentação da API
+
+A documentação completa da API está disponível via Swagger UI após iniciar o servidor:
+
+http://localhost:3000/api-docs
+
+| Método | Endpoint              | Descrição                    |
+| ------ | --------------------- | ---------------------------- |
+| POST   | `/auth/login`         | Autenticação de usuário      |
+| GET    | `/heroes`             | Listar todos os heróis       |
+| POST   | `/heroes`             | Criar um novo herói          |
+| GET    | `/heroes/:id`         | Obter detalhes de um herói   |
+| PUT    | `/heroes/:id`         | Atualizar um herói           |
+| DELETE | `/heroes/:id`         | Excluir um herói             |
+| POST   | `/battles`            | Registrar uma nova batalha   |
+| GET    | `/reports/hero-stats` | Obter estatísticas de heróis |
+
+
+A aplicação utiliza @Roles() para proteger rotas com base no papel do usuário. Exemplo:
+@Roles('ADMIN', 'HERO')
+@Get()
+findAll() {
+  // ...
+}
+
+Autor
+Desenvolvido por Leonardo Santos.
+
+
