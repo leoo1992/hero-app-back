@@ -16,6 +16,8 @@ Este projeto utiliza as seguintes tecnologias:
 * **Documentação:** [Swagger](https://swagger.io/)
 * **Container:** [Docker](https://www.docker.com/)
 * **Linguagem:** TypeScript
+* **Proteção de ataque de Força bruta**
+
 
 **Pré-requisitos:**
    * Docker e Docker Compose instalados e funcionando.
@@ -54,29 +56,41 @@ docker-compose up -d --build
 3. **O .env está exposto**
 
 ## 📁 Estrutura de Arquivos
+
 ```
+
 hero-app-back/
+├── src/
 ├── Insomnia.yaml
 ├── README.md
 ├── docker-compose.yml
+├── .env
+├── .prettierrc
+├── .README.md
 ├── eslint.config.mjs
+├── jest.config.js
 ├── nest-cli.json
 ├── package-lock.json
 ├── package.json
-├── src/
 ├── tsconfig.build.json
 └── tsconfig.json
+
 ```
 
 ## Estrutura base de Arquivos
 
 ```
 src/
-├── controllers/       // Controladores das rotas da API
-│   └── ...
+├── controllers/        // Controladores das rotas da API
+├── decorators/         // Decoradores de codigos
+├── dtos/               // DTO's
+├── entities/           // Entidades
+├── guards/             // Guards
 ├── modules/            // Modelos de dados
-│   └── ...
-├── services/          // Lógica de negócio
+├── seeds/              // Alimentação inicial do banco (ADMIN)
+├── services/           // Logica de negocios
+├── stategies/          // Estrategias utilizadas
+├── tests/              // testes realizados
 
 ```
 
@@ -117,7 +131,7 @@ findAll() {
   // ...
 }
 
-Autor
+
 Desenvolvido por Leonardo Santos.
 
 
