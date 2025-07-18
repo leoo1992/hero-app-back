@@ -40,6 +40,32 @@ describe('ProjectService', () => {
     heroService = module.get(HeroService);
   });
 
+  describe('ProjectService.getProgresso', () => {
+    const fakeRepository = {} as any;
+    const fakeHeroService = {} as any;
+    const service = new ProjectService(fakeRepository, fakeHeroService);
+
+    it('deve calcular corretamente a média das estatísticas', () => {
+      const projeto = {
+        estatisticas: {
+          agilidade: 80,
+          encantamento: 90,
+          eficiencia: 85,
+          excelencia: 75,
+          transparencia: 70,
+          ambicao: 95,
+        },
+      } as Project;
+
+      expect(service.getProgresso(projeto)).toBe(83);
+    });
+
+    it('deve retornar 0 se não houver estatísticas', () => {
+      const projeto = { estatisticas: {} } as Project;
+      expect(service.getProgresso(projeto)).toBe(0);
+    });
+  });
+
   describe('create', () => {
     it('deve lançar BadRequestException se nome estiver vazio', async () => {
       const dto: ProjectDto = {

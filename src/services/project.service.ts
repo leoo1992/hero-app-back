@@ -196,4 +196,16 @@ export class ProjectService {
       throw new NotFoundException('Project não encontrado');
     }
   }
+
+  getProgresso(project: Project): number {
+    const estatisticas = project.estatisticas;
+    const valores = Object.values(estatisticas);
+
+    if (!valores.length) return 0;
+
+    const soma = valores.reduce((acc, val) => acc + val, 0);
+    const media = soma / valores.length;
+
+    return Math.round(media);
+  }
 }

@@ -31,6 +31,7 @@ export async function seedAdmin() {
       admin.email = 'admin@heroforce.com';
       admin.senha = await bcrypt.hash('admin123', 10);
       admin.acesso = 'ADMIN';
+      admin.hero = 'Batman';
       admin.criado = new Date();
       admin.atualizado = new Date();
 

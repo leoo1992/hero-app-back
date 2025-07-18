@@ -40,6 +40,7 @@ describe('ProjectController', () => {
     findWithFilters: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    getProgresso: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -81,15 +82,22 @@ describe('ProjectController', () => {
 
   it('deve buscar um projeto por ID', async () => {
     service.findById = jest.fn().mockResolvedValue(projetoMock);
+    service.getProgresso = jest.fn().mockReturnValue(75);
 
     const resultado = await controller.findById(1);
 
     expect(service.findById).toHaveBeenCalledWith(1);
-    expect(resultado).toEqual(projetoMock);
+    expect(service.getProgresso).toHaveBeenCalledWith(projetoMock);
+    expect(resultado.progresso).toBe(75);
+    expect(resultado).toEqual({
+      ...projetoMock,
+      progresso: 75,
+    });
   });
 
   it('deve listar projetos com filtros', async () => {
     service.findWithFilters = jest.fn().mockResolvedValue([projetoMock]);
+    service.getProgresso = jest.fn().mockReturnValue(75);
 
     const filtros = { status: 'ANDAMENTO', responsavelId: 1, nome: 'Alpha', descricao: 'secreto' };
 
@@ -101,7 +109,13 @@ describe('ProjectController', () => {
     );
 
     expect(service.findWithFilters).toHaveBeenCalledWith(filtros);
-    expect(resultado).toEqual([projetoMock]);
+    expect(service.getProgresso).toHaveBeenCalledWith(projetoMock);
+    expect(resultado).toEqual([
+      {
+        ...projetoMock,
+        progresso: 75,
+      },
+    ]);
   });
 
   it('deve atualizar um projeto por ID', async () => {

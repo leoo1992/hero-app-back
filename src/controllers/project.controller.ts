@@ -26,6 +26,7 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
+import { ProjectProgressDto } from 'src/dtos/projectProgress.dto';
 
 @ApiTags('Projetos')
 @ApiBearerAuth()
@@ -50,26 +51,45 @@ export class ProjectController {
   @ApiQuery({ name: 'responsavelId', required: false, description: 'ID do herói responsável' })
   @ApiQuery({ name: 'nome', required: false, description: 'Nome parcial do projeto' })
   @ApiQuery({ name: 'descricao', required: false, description: 'Descrição parcial do projeto' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de projetos com progresso',
+    type: ProjectProgressDto,
+    isArray: true,
+  })
   async findAll(
     @Query('status') status?: string,
     @Query('responsavelId') responsavelId?: number,
     @Query('nome') nome?: string,
     @Query('descricao') descricao?: string,
-  ): Promise<Project[]> {
-    return this.projectService.findWithFilters({
+  ): Promise<ProjectProgressDto[]> {
+    const projects = await this.projectService.findWithFilters({
       status,
       responsavelId,
       nome,
       descricao,
     });
+
+    return projects.map((project) => ({
+      ...project,
+      progresso: this.projectService.getProgresso(project),
+    }));
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Busca projeto por ID (autenticado)' })
   @ApiParam({ name: 'id', type: Number, description: 'ID do projeto' })
-  @ApiResponse({ status: 200, description: 'Projeto encontrado', type: Project })
-  async findById(@Param('id', ParseIntPipe) id: number): Promise<Project> {
-    return this.projectService.findById(id);
+  @ApiResponse({
+    status: 200,
+    description: 'Projeto encontrado com progresso',
+    type: ProjectProgressDto,
+  })
+  async findById(@Param('id', ParseIntPipe) id: number): Promise<ProjectProgressDto> {
+    const project = await this.projectService.findById(id);
+    return {
+      ...project,
+      progresso: this.projectService.getProgresso(project),
+    };
   }
 
   @Put(':id')
