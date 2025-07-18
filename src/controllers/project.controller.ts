@@ -43,16 +43,27 @@ export class ProjectController {
     return this.projectService.create(dto);
   }
 
-  @Get()
-  @Roles('ADMIN')
-  @ApiQuery({ name: 'status', required: false })
-  @ApiQuery({ name: 'responsavelId', required: false, description: 'ID do herói responsável' })
-  async findAll(
-    @Query('status') status?: string,
-    @Query('responsavelId') responsavelId?: number,
-  ): Promise<Project[]> {
-    return this.projectService.findWithFilters(status, responsavelId);
-  }
+@Get()
+@Roles('ADMIN')
+@ApiOperation({ summary: 'Buscar projetos com filtros (ADMIN)' })
+@ApiQuery({ name: 'status', required: false })
+@ApiQuery({ name: 'responsavelId', required: false, description: 'ID do herói responsável' })
+@ApiQuery({ name: 'nome', required: false, description: 'Nome parcial do projeto' })
+@ApiQuery({ name: 'descricao', required: false, description: 'Descrição parcial do projeto' })
+async findAll(
+  @Query('status') status?: string,
+  @Query('responsavelId') responsavelId?: number,
+  @Query('nome') nome?: string,
+  @Query('descricao') descricao?: string,
+): Promise<Project[]> {
+  return this.projectService.findWithFilters({
+    status,
+    responsavelId,
+    nome,
+    descricao,
+  });
+}
+
 
   @Get(':id')
   @ApiOperation({ summary: 'Busca projeto por ID (autenticado)' })

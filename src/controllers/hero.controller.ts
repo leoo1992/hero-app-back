@@ -33,26 +33,23 @@ export class HeroController {
     return this.heroService.create(dto);
   }
 
-  @Get('search/email')
-  @Roles('ADMIN')
-  @ApiOperation({ summary: 'Buscar herói por e-mail (ADMIN)' })
-  @ApiResponse({ status: 200, description: 'Herói encontrado.', type: Hero })
-  async findByEmail(@Query('email') email: string): Promise<Hero | null> {
-    return this.heroService.findByEmail(email);
-  }
-
   @Get()
   @Roles('ADMIN')
   @ApiOperation({ summary: 'Listar todos os heróis com filtros (ADMIN)' })
   @ApiResponse({ status: 200, description: 'Lista de heróis.', type: [Hero] })
-  @ApiQuery({ name: 'status', required: false, description: 'Status do projeto para filtro' })
-  @ApiQuery({
-    name: 'hero',
-    required: false,
-    description: 'Nome ou personagem do herói para filtro',
-  })
-  async findAll(@Query('status') status?: string, @Query('hero') hero?: string): Promise<Hero[]> {
-    return this.heroService.findWithFilters(status, hero);
+  @ApiQuery({ name: 'status', required: false, description: 'Status do projeto' })
+  @ApiQuery({ name: 'hero', required: false, description: 'Nome do personagem' })
+  @ApiQuery({ name: 'email', required: false, description: 'Email do herói' })
+  @ApiQuery({ name: 'nome', required: false, description: 'Nome real do herói' })
+  @ApiQuery({ name: 'id', required: false, description: 'ID do herói' })
+  async findAll(
+    @Query('status') status?: string,
+    @Query('hero') hero?: string,
+    @Query('email') email?: string,
+    @Query('nome') nome?: string,
+    @Query('id') id?: number,
+  ): Promise<Hero[]> {
+    return this.heroService.findWithFilters({ status, hero, email, nome, id });
   }
 
   @Get(':id')
