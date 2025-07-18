@@ -4,6 +4,10 @@ import { Project } from './project.entity';
 
 @Entity('heros')
 export class Hero {
+  constructor() {
+    this.acesso = 'HERO';
+  }
+
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;

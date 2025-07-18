@@ -12,7 +12,12 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "seed": "ts-node src/seeds/run-seeds.ts"
+    "seed": "ts-node src/seeds/run-seeds.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "open:cov": "start coverage/lcov-report/index.html",
+    "cov": "npm run test:cov && npm run open:cov"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
