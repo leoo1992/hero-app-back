@@ -36,9 +36,9 @@ export async function seedAdmin() {
       admin.atualizado = new Date();
 
       await heroRepository.save(admin);
-      logger.verbose('Usuário ADMIN criado.');
+      logger.warn('Usuário ADMIN criado.');
     } else {
-      logger.verbose('Usuário ADMIN já existe.');
+      logger.warn('Usuário ADMIN já existe.');
     }
   } catch (error) {
     logger.error('Erro ao executar seedAdmin:', error);

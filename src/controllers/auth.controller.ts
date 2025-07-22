@@ -100,7 +100,7 @@ export class AuthController {
           await this.jwtBlacklistService.add(refreshToken);
         }
       } catch (error) {
-        this.logger.error('Falha ao decodificar refresh token no logout', error);
+        this.logger.warn('Falha ao decodificar refresh token no logout', error);
       }
     }
 
@@ -116,7 +116,7 @@ export class AuthController {
           await this.jwtBlacklistService.add(accessToken);
         }
       } catch (error) {
-        this.logger.error('Falha ao decodificar access token no logout', error);
+        this.logger.warn('Falha ao decodificar access token no logout', error);
       }
     }
 
