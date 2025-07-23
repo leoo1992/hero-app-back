@@ -155,7 +155,8 @@ export class HeroService {
         this.projectRepository.create({ ...p, responsavel: hero }),
       );
       await this.projectRepository.save(projetosCriados);
-      hero.projects = [...(hero.projects || []), ...projetosCriados];
+
+      hero.projects = [...(hero.projects), ...projetosCriados];
     }
 
     return this.heroRepository.save(hero);

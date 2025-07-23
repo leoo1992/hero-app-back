@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Req, Res, UnauthorizedException, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Res,
+  UnauthorizedException,
+  Logger,
+  BadRequestException,
+} from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dtos/login.dto';
 import { Request, Response } from 'express';
@@ -88,38 +97,57 @@ export class AuthController {
       sameSite: 'lax',
     });
 
-    const refreshToken = req.cookies['refresh_token'];
-
-    if (refreshToken) {
-      try {
-        const payload = this.authService.decodeToken(refreshToken);
-        const nowInSeconds = Math.floor(Date.now() / 1000);
-        const ttl = payload?.exp ? payload.exp - nowInSeconds : 0;
-
-        if (ttl > 0) {
-          await this.jwtBlacklistService.add(refreshToken);
-        }
-      } catch (error) {
-        this.logger.warn('Falha ao decodificar refresh token no logout', error);
-      }
-    }
-
-    const authHeader = req.headers['authorization'];
-    if (authHeader && typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
-      const accessToken = authHeader.replace('Bearer ', '').trim();
-      try {
-        const payload = this.authService.decodeToken(accessToken);
-        const nowInSeconds = Math.floor(Date.now() / 1000);
-        const ttl = payload?.exp ? payload.exp - nowInSeconds : 0;
-
-        if (ttl > 0) {
-          await this.jwtBlacklistService.add(accessToken);
-        }
-      } catch (error) {
-        this.logger.warn('Falha ao decodificar access token no logout', error);
-      }
-    }
+    await this.handleRefreshToken(req);
+    await this.handleAccessToken(req);
 
     return { message: 'Logout realizado com sucesso' };
+  }
+
+  private async handleRefreshToken(req: Request): Promise<void> {
+    const refreshToken = req.cookies['refresh_token'];
+    if (!refreshToken) return;
+
+    try {
+      const payload = this.authService.decodeToken(refreshToken);
+      const ttl = this.getTokenTTL(payload);
+
+      if (ttl > 0) {
+        await this.jwtBlacklistService.add(refreshToken);
+      }
+    } catch (error) {
+      this.logger.warn('Falha ao decodificar refresh token no logout', error);
+    }
+  }
+
+  private async handleAccessToken(req: Request): Promise<void> {
+    const authHeader = req.headers['authorization'];
+
+    if (!authHeader || typeof authHeader !== 'string' || !authHeader.startsWith('Bearer ')) {
+      this.logger.warn('Nenhum token de acesso encontrado no cabeçalho Authorization');
+      return;
+    }
+
+    const accessToken = authHeader.replace('Bearer ', '').trim();
+    if (!accessToken) {
+      throw new BadRequestException();
+    }
+
+    try {
+      const payload = this.authService.decodeToken(accessToken);
+      const ttl = this.getTokenTTL(payload);
+
+      if (ttl > 0) {
+        await this.jwtBlacklistService.add(accessToken);
+      } else {
+        this.logger.warn('Access token já expirado no logout');
+      }
+    } catch (error) {
+      this.logger.warn('Falha ao decodificar access token no logout', error);
+    }
+  }
+
+  private getTokenTTL(payload: any): number {
+    const nowInSeconds = Math.floor(Date.now() / 1000);
+    return payload?.exp ? payload.exp - nowInSeconds : 0;
   }
 }

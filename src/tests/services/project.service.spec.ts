@@ -64,6 +64,11 @@ describe('ProjectService', () => {
       const projeto = { estatisticas: {} } as Project;
       expect(service.getProgresso(projeto)).toBe(0);
     });
+
+    it('deve retornar 0 se estatísticas forem undefined', () => {
+      const projeto = {} as Project;
+      expect(service.getProgresso(projeto)).toBe(0);
+    });
   });
 
   describe('create', () => {
@@ -183,6 +188,38 @@ describe('ProjectService', () => {
       expect(resultado).toHaveProperty('id', 1);
       expect(resultado).toHaveProperty('nome', dto.nome);
     });
+
+    it('deve criar projeto mesmo sem descrição (usa fallback)', async () => {
+      const dto: ProjectDto = {
+        nome: 'Projeto Sem Descrição',
+        status: 'PENDENTE',
+        responsavel: 1,
+        descricao: '',
+        estatisticas: {
+          agilidade: 0,
+          encantamento: 0,
+          eficiencia: 0,
+          excelencia: 0,
+          transparencia: 0,
+          ambicao: 0,
+        },
+      };
+
+      const responsavelMock = { id: 1, nome: 'Herói' } as any;
+
+      heroService.findById.mockResolvedValue(responsavelMock);
+      projectRepo.create.mockImplementation((input: any) => input);
+      projectRepo.save.mockImplementation(async (p: any) => ({ id: 1, ...p }));
+
+      const resultado = await service.create(dto as any);
+
+      expect(projectRepo.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          descricao: '',
+        }),
+      );
+      expect(resultado.descricao).toBe('');
+    });
   });
 
   describe('findWithFilters', () => {
@@ -230,6 +267,22 @@ describe('ProjectService', () => {
       await expect(
         service.findWithFilters({ criadoAntes: 'data-invalida' }),
       ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('deve aplicar filtro apenas por nome', async () => {
+      const queryBuilderMock = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(['projeto1']),
+      };
+      projectRepo.createQueryBuilder.mockReturnValue(queryBuilderMock);
+
+      const resultado = await service.findWithFilters({ nome: 'Exemplo' });
+
+      expect(queryBuilderMock.andWhere).toHaveBeenCalledWith('project.nome ILIKE :nome', {
+        nome: '%Exemplo%',
+      });
+      expect(resultado).toEqual(['projeto1']);
     });
   });
 
@@ -331,6 +384,49 @@ describe('ProjectService', () => {
       await expect(service.update(1, { status: 'INVALIDO' as any })).rejects.toBeInstanceOf(
         BadRequestException,
       );
+    });
+
+    it('deve definir descrição como string vazia se descrição não for informada', async () => {
+      const projetoExistente = {
+        id: 1,
+        nome: 'Projeto',
+        descricao: 'Antiga',
+        status: 'PENDENTE',
+        estatisticas: {},
+        responsavel: { id: 1 },
+        atualizado: new Date(),
+      } as any;
+
+      projectRepo.findOne.mockResolvedValue(projetoExistente);
+      heroService.findById.mockResolvedValue({ id: 1 });
+      projectRepo.save.mockResolvedValue(projetoExistente);
+
+      const resultado = await service.update(1, { descricao: undefined });
+
+      expect(resultado.descricao).toBe('');
+    });
+
+    it('deve lançar BadRequestException se status estiver em branco ao atualizar', async () => {
+      projectRepo.findOne.mockResolvedValue({} as Project);
+
+      await expect(service.update(1, { status: '   ' as TProjectStatus })).rejects.toBeInstanceOf(
+        BadRequestException,
+      );
+    });
+
+    it('deve atualizar status corretamente mesmo com espaços em branco', async () => {
+      const projetoExistente = {
+        id: 1,
+        status: 'PENDENTE',
+        atualizado: new Date(),
+      } as any;
+
+      projectRepo.findOne.mockResolvedValue(projetoExistente);
+      projectRepo.save.mockImplementation((p: any) => Promise.resolve(p));
+
+      const resultado = await service.update(1, { status: ' CONCLUIDO ' as TProjectStatus });
+
+      expect(resultado.status).toBe('CONCLUIDO');
     });
   });
 

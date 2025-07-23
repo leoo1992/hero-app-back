@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtBlacklistService } from 'src/services/jwt-blacklist.service';
 import { Request } from 'express';
 
-type JwtPayload = {
+export type JwtPayload = {
   sub: number;
   email: string;
   nome: string;

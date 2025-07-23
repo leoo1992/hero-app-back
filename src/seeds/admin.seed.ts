@@ -5,10 +5,10 @@ import { Project } from '../entities/project.entity';
 import * as bcrypt from 'bcrypt';
 import { Logger } from '@nestjs/common';
 
-const AppDataSource = new DataSource({
+export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT! || '5433'),
+  port: parseInt(process.env.DB_PORT!),
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
@@ -16,7 +16,7 @@ const AppDataSource = new DataSource({
   entities: [Hero, Project],
 });
 
-const logger = new Logger('SeedAdmin');
+export const logger = new Logger('SeedAdmin');
 
 export async function seedAdmin() {
   try {

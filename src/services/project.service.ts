@@ -159,8 +159,8 @@ export class ProjectService {
       project.nome = dto.nome.trim();
     }
 
-    if (dto.descricao !== undefined) {
-      project.descricao = dto.descricao?.trim() ?? '';
+    if ('descricao' in dto) {
+      project.descricao = typeof dto.descricao === 'string' ? dto.descricao.trim() : '';
     }
 
     if (dto.status !== undefined) {
@@ -199,13 +199,18 @@ export class ProjectService {
 
   getProgresso(project: Project): number {
     const estatisticas = project.estatisticas;
+
+    if (!estatisticas || typeof estatisticas !== 'object') {
+      return 0;
+    }
+
     const valores = Object.values(estatisticas);
 
     if (!valores.length) return 0;
 
     const soma = valores.reduce((acc, val) => acc + val, 0);
-    const media = soma / valores.length;
+    const media = Math.round(soma / valores.length);
 
-    return Math.round(media);
+    return media;
   }
 }

@@ -207,6 +207,14 @@ describe('HeroService', () => {
 
       await expect(service.findById(1)).rejects.toBeInstanceOf(NotFoundException);
     });
+
+    it('deve lançar NotFoundException se findById retornar null', async () => {
+      try {
+        await service.findById(999);
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+      }
+    });
   });
 
   describe('atualizar', () => {
@@ -317,6 +325,88 @@ describe('HeroService', () => {
       await expect(service.update(1, { email: 'conflito@exemplo.com' })).rejects.toBeInstanceOf(
         ConflictException,
       );
+    });
+
+    it('deve lançar NotFoundException se herói não for encontrado ao atualizar (caminho interno)', async () => {
+      heroRepo.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.update(1, {
+          projects: [
+            {
+              nome: 'p1',
+              descricao: 'Teste',
+              status: 'PENDENTE',
+              estatisticas: {} as TProjectEstatisticas,
+              responsavel: 0,
+            },
+          ],
+        }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('não deve criar projetos se dto.projects for vazio', async () => {
+      const heroiExistente = {
+        id: 1,
+        email: 'antigo@exemplo.com',
+        nome: 'Nome Antigo',
+        senha: 'hashantigo',
+        hero: 'heroiAntigo',
+        atualizado: new Date(),
+        projects: [],
+      } as any;
+
+      heroRepo.findOne.mockResolvedValueOnce(heroiExistente);
+      heroRepo.findOne.mockResolvedValueOnce(null);
+
+      heroRepo.save.mockResolvedValue(heroiExistente);
+
+      const dto = {
+        email: 'novo@exemplo.com',
+        nome: 'Nome Novo',
+        senha: 'novaSenha',
+        hero: 'heroiNovo',
+        projects: [],
+      };
+
+      jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('senhaHash'));
+
+      const resultado = await service.update(1, dto);
+
+      expect(resultado.email).toBe(dto.email.toLowerCase());
+      expect(projectRepo.create).not.toHaveBeenCalled();
+      expect(projectRepo.save).not.toHaveBeenCalled();
+    });
+
+    it('não deve criar projetos se dto.projects for undefined', async () => {
+      const heroiExistente = {
+        id: 1,
+        email: 'antigo@exemplo.com',
+        nome: 'Nome Antigo',
+        senha: 'hashantigo',
+        hero: 'heroiAntigo',
+        atualizado: new Date(),
+        projects: [],
+      } as any;
+
+      heroRepo.findOne.mockResolvedValueOnce(heroiExistente);
+      heroRepo.findOne.mockResolvedValueOnce(null);
+      heroRepo.save.mockResolvedValue(heroiExistente);
+
+      const dto = {
+        email: 'novo@exemplo.com',
+        nome: 'Nome Novo',
+        senha: 'novaSenha',
+        hero: 'heroiNovo',
+      };
+
+      jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('senhaHash'));
+
+      const resultado = await service.update(1, dto);
+
+      expect(resultado.email).toBe(dto.email.toLowerCase());
+      expect(projectRepo.create).not.toHaveBeenCalled();
+      expect(projectRepo.save).not.toHaveBeenCalled();
     });
   });
 

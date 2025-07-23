@@ -73,4 +73,83 @@ describe('JwtBlacklistGuard', () => {
       new UnauthorizedException('Token malformado'),
     );
   });
+
+  it('deve lançar erro se o token estiver presente mas vazio', async () => {
+    mockRequest.headers = { authorization: 'Bearer ' };
+    await expect(guard.canActivate(mockContext as ExecutionContext)).rejects.toThrow(
+      new UnauthorizedException('Token inválido'),
+    );
+  });
+
+  it('deve lançar erro genérico se jwt.verify lançar erro desconhecido', async () => {
+    const token = 'some.token.value';
+    mockRequest.headers = { authorization: `Bearer ${token}` };
+    jest.spyOn(blacklistService, 'isBlacklisted').mockResolvedValue(false);
+
+    jest.spyOn(jwt, 'verify').mockImplementation(() => {
+      throw new Error('Erro inesperado');
+    });
+
+    await expect(guard.canActivate(mockContext as ExecutionContext)).rejects.toThrow(
+      new UnauthorizedException('Token inválido'),
+    );
+  });
+
+  it('deve lançar erro se jwt.verify retornar valor falsy', async () => {
+    const token = 'fake.token';
+    mockRequest.headers = { authorization: `Bearer ${token}` };
+    jest.spyOn(blacklistService, 'isBlacklisted').mockResolvedValue(false);
+
+    jest.spyOn(jwt, 'verify').mockReturnValue(null as any);
+
+    await expect(guard.canActivate(mockContext as ExecutionContext)).rejects.toThrow(
+      new UnauthorizedException('Token inválido'),
+    );
+  });
+
+  it('deve lançar erro se request.user for falsy após atribuição', async () => {
+    const token = 'fake.token';
+    mockRequest.headers = { authorization: `Bearer ${token}` };
+    jest.spyOn(blacklistService, 'isBlacklisted').mockResolvedValue(false);
+
+    jest.spyOn(jwt, 'verify').mockReturnValue(undefined);
+
+    await expect(guard.canActivate(mockContext as ExecutionContext)).rejects.toThrow(
+      new UnauthorizedException('Token inválido'),
+    );
+  });
+
+  it('deve executar jwt.verify com token válido', async () => {
+    jest.restoreAllMocks();
+
+    const tokenPayload = { id: 42 };
+    const token = jwt.sign(tokenPayload, 'secret');
+
+    mockRequest.headers = { authorization: `Bearer ${token}` };
+    process.env.JWT_SECRET = 'secret';
+
+    jest.spyOn(blacklistService, 'isBlacklisted').mockResolvedValue(false);
+
+    const result = await guard.canActivate(mockContext as ExecutionContext);
+
+    expect(result).toBe(true);
+    expect(mockRequest.user).toMatchObject(tokenPayload);
+  });
+
+  it('deve lançar erro se JWT_SECRET não estiver configurado', async () => {
+    const tokenPayload = { id: 999 };
+    const token = jwt.sign(tokenPayload, 'secret');
+
+    mockRequest.headers = { authorization: `Bearer ${token}` };
+    jest.spyOn(blacklistService, 'isBlacklisted').mockResolvedValue(false);
+
+    const originalSecret = process.env.JWT_SECRET;
+    delete process.env.JWT_SECRET;
+
+    await expect(guard.canActivate(mockContext as ExecutionContext)).rejects.toThrow(
+      new UnauthorizedException('JWT secret não configurado'),
+    );
+
+    process.env.JWT_SECRET = originalSecret;
+  });
 });

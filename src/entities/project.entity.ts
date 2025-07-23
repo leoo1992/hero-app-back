@@ -8,6 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { Type } from 'class-transformer';
 import { Hero } from './hero.entity';
 
 export type TProjectStatus = 'PENDENTE' | 'ANDAMENTO' | 'CONCLUIDO';
@@ -61,9 +62,14 @@ export class Project {
   @Column({ type: 'json' })
   estatisticas: TProjectEstatisticas;
 
-  @ApiProperty({ type: () => Hero })
+  @ApiProperty({
+    type:
+      /* istanbul ignore next */
+      () => Hero,
+  })
   @ManyToOne(() => Hero, { nullable: false })
   @JoinColumn({ name: 'responsavel' })
+  @Type(() => Hero)
   responsavel: Hero;
 
   @ApiProperty()

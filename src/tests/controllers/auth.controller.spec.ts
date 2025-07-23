@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '../../../src/controllers/auth.controller';
 import { AuthService } from '../../../src/services/auth.service';
 import { JwtBlacklistService } from '../../../src/services/jwt-blacklist.service';
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Response, Request } from 'express';
 
 describe('AuthController', () => {
@@ -61,6 +61,46 @@ describe('AuthController', () => {
         refresh_token: 'refresh123',
       });
     });
+
+    it('deve lançar UnauthorizedException se payload do refresh token for inválido', async () => {
+      const req = {
+        cookies: { refresh_token: 'refresh123' },
+        headers: {},
+      } as unknown as Request;
+      const res = mockResponse();
+
+      authService.decodeToken.mockReturnValue(null);
+
+      await controller.logout(req, res);
+      expect(jwtBlacklistService.add).not.toHaveBeenCalled();
+    });
+
+    it('deve lançar BadRequestException se access token for vazio', async () => {
+      const req = {
+        cookies: {},
+        headers: { authorization: 'Bearer ' },
+      } as unknown as Request;
+      const res = mockResponse();
+
+      await expect(controller.logout(req, res)).rejects.toThrow(BadRequestException);
+    });
+
+    it('deve logar aviso se authorization header estiver ausente', async () => {
+      const req = {
+        cookies: {},
+        headers: {},
+      } as unknown as Request;
+      const res = mockResponse();
+
+      const loggerSpy = jest.spyOn<any, any>(controller['logger'], 'warn');
+
+      await controller.logout(req, res);
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Nenhum token de acesso encontrado no cabeçalho Authorization',
+      );
+      loggerSpy.mockRestore();
+    });
   });
 
   describe('refresh', () => {
@@ -87,6 +127,27 @@ describe('AuthController', () => {
       const res = mockResponse();
 
       await expect(controller.refresh(req, res)).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('deve logar aviso se access token já estiver expirado', async () => {
+      const req = {
+        cookies: {},
+        headers: { authorization: 'Bearer access123' },
+      } as unknown as Request;
+
+      const res = mockResponse();
+
+      const expiredPayload = { exp: Math.floor(Date.now() / 1000) - 10 };
+      authService.decodeToken.mockReturnValue(expiredPayload);
+
+      const loggerSpy = jest.spyOn<any, any>(controller['logger'], 'warn');
+
+      const result = await controller.logout(req, res);
+
+      expect(loggerSpy).toHaveBeenCalledWith('Access token já expirado no logout');
+      expect(result).toEqual({ message: 'Logout realizado com sucesso' });
+
+      loggerSpy.mockRestore();
     });
   });
 

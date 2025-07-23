@@ -27,9 +27,20 @@ export class JwtBlacklistGuard implements CanActivate {
       throw new UnauthorizedException('Token inválido (logout)');
     }
 
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new UnauthorizedException('JWT secret não configurado');
+    }
+
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET ?? 'secret');
+      const decoded = jwt.verify(token, jwtSecret);
+
+      if (!decoded) {
+        throw new UnauthorizedException('Token inválido');
+      }
+
       request.user = decoded;
+
       return true;
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {

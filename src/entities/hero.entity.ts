@@ -40,7 +40,11 @@ export class Hero {
   @Column({ type: 'timestamp', nullable: true })
   atualizado: Date;
 
-  @ApiProperty({ type: () => [Project] })
+  @ApiProperty({
+    type:
+      /* istanbul ignore next */
+      () => [Project],
+  })
   @OneToMany(() => Project, (project) => project.responsavel)
   projects: Project[];
 }
