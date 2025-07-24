@@ -21,7 +21,13 @@ export class AuthService {
 
     if (!senhaValida) throw new UnauthorizedException('Email ou senha inválidos');
 
-    const payload = { sub: hero.id, email: hero.email, nome: hero.nome };
+    const payload = {
+      sub: hero.id,
+      email: hero.email,
+      nome: hero.nome,
+      acesso: hero.acesso,
+    };
+
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 

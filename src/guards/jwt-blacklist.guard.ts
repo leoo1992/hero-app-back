@@ -11,7 +11,7 @@ export class JwtBlacklistGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const authHeader = request.headers['authorization'];
 
-    if (!authHeader || typeof authHeader !== 'string') {
+    if (!authHeader) {
       throw new UnauthorizedException('Token ausente');
     }
 
