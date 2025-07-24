@@ -37,7 +37,7 @@ export class AuthController {
     },
   })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-    const { accessToken, refreshToken } = await this.authService.login(dto);
+    const { accessToken, refreshToken, nome, acesso } = await this.authService.login(dto);
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
@@ -46,7 +46,12 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return { access_token: accessToken, refresh_token: refreshToken };
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      nome,
+      acesso,
+    };
   }
 
   @Post('refresh')
@@ -149,5 +154,27 @@ export class AuthController {
   private getTokenTTL(payload: any): number {
     const nowInSeconds = Math.floor(Date.now() / 1000);
     return payload?.exp ? payload.exp - nowInSeconds : 0;
+  }
+
+  @Post('verify')
+  @ApiOperation({ summary: 'Verifica se o token é válido e retorna dados do usuário' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token válido',
+    schema: {
+      example: {
+        nome: 'Lucas Silva',
+        email: 'lucas@email.com',
+        acesso: 'ADMIN',
+      },
+    },
+  })
+  async verify(@Req() req: Request) {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || typeof authHeader !== 'string' || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Token ausente');
+    }
+    const token = authHeader.replace('Bearer ', '').trim();
+    return this.authService.verifyToken(token);
   }
 }

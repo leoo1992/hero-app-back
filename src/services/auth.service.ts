@@ -31,7 +31,7 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, nome: hero.nome, acesso: hero.acesso };
   }
 
   async refreshTokens(refreshToken: string) {
@@ -54,6 +54,20 @@ export class AuthService {
       return this.jwtService.decode(token);
     } catch {
       return null;
+    }
+  }
+
+  async verifyToken(token: string) {
+    try {
+      const payload = this.jwtService.verify(token);
+      return {
+        nome: payload.nome,
+        email: payload.email,
+        acesso: payload.acesso,
+      };
+    } catch (error) {
+      this.logger.warn('Token inválido', error);
+      throw new UnauthorizedException('Token inválido');
     }
   }
 }
