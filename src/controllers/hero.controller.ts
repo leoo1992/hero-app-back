@@ -22,7 +22,6 @@ import { Roles } from 'src/decorators/roles.decorator';
 @ApiTags('Heróis')
 @ApiBearerAuth('access-token')
 @Controller('hero')
-@UseGuards(JwtBlacklistGuard, RolesGuard)
 export class HeroController {
   constructor(private readonly heroService: HeroService) {}
 
@@ -35,6 +34,7 @@ export class HeroController {
 
   @Get()
   @Roles('ADMIN')
+  @UseGuards(JwtBlacklistGuard, RolesGuard)
   @ApiOperation({ summary: 'Listar todos os heróis com filtros (ADMIN)' })
   @ApiResponse({ status: 200, description: 'Lista de heróis.', type: [Hero] })
   @ApiQuery({ name: 'status', required: false, description: 'Status do projeto' })
@@ -53,6 +53,7 @@ export class HeroController {
   }
 
   @Get(':id')
+  @UseGuards(JwtBlacklistGuard)
   @ApiOperation({ summary: 'Buscar herói por ID' })
   @ApiResponse({ status: 200, description: 'Herói encontrado.', type: Hero })
   async findById(@Param('id', ParseIntPipe) id: number): Promise<Hero> {
@@ -61,6 +62,7 @@ export class HeroController {
 
   @Put(':id')
   @Roles('ADMIN')
+  @UseGuards(JwtBlacklistGuard, RolesGuard)
   @ApiOperation({ summary: 'Atualizar herói por ID (ADMIN)' })
   @ApiResponse({ status: 200, description: 'Herói atualizado.', type: Hero })
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateHeroDto): Promise<Hero> {
@@ -69,6 +71,7 @@ export class HeroController {
 
   @Delete(':id')
   @Roles('ADMIN')
+  @UseGuards(JwtBlacklistGuard, RolesGuard)
   @ApiOperation({ summary: 'Excluir herói por ID (ADMIN)' })
   @ApiResponse({ status: 204, description: 'Herói excluído com sucesso.' })
   async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {

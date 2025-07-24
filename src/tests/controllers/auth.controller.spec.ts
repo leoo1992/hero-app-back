@@ -51,6 +51,7 @@ describe('AuthController', () => {
         accessToken: 'access123',
         refreshToken: 'refresh123',
         nome: 'Super Hero',
+        email: 'superhero@hero.com',
         acesso: 'ADMIN',
       });
 
@@ -63,6 +64,7 @@ describe('AuthController', () => {
         refresh_token: 'refresh123',
         nome: 'Super Hero',
         acesso: 'ADMIN',
+        email: 'superhero@hero.com',
       });
     });
 
@@ -192,6 +194,119 @@ describe('AuthController', () => {
       expect(res.clearCookie).toHaveBeenCalled();
       expect(jwtBlacklistService.add).not.toHaveBeenCalled();
       expect(resultado).toEqual({ message: 'Logout realizado com sucesso' });
+    });
+  });
+
+  it('deve logar aviso se refresh token estiver ausente no handleRefreshToken', async () => {
+    const req = {
+      cookies: {},
+      headers: {},
+    } as unknown as Request;
+
+    const loggerSpy = jest.spyOn<any, any>(controller['logger'], 'warn');
+
+    await controller['handleRefreshToken'](req);
+
+    expect(loggerSpy).toHaveBeenCalledWith(
+      'Nenhum token de acesso encontrado no cabeçalho Authorization',
+    );
+
+    loggerSpy.mockRestore();
+  });
+
+  describe('verify', () => {
+    it('deve retornar os dados do usuário se o token for válido', async () => {
+      const req = {
+        headers: { authorization: 'Bearer valid-token' },
+      } as unknown as Request;
+
+      authService.verifyToken = jest.fn().mockResolvedValue({
+        nome: 'Usuário',
+        email: 'user@example.com',
+        acesso: 'ADMIN',
+      });
+
+      const result = await controller.verify(req);
+
+      expect(authService.verifyToken).toHaveBeenCalledWith('valid-token');
+      expect(result).toEqual({
+        nome: 'Usuário',
+        email: 'user@example.com',
+        acesso: 'ADMIN',
+      });
+    });
+
+    it('deve lançar UnauthorizedException se o token estiver ausente', async () => {
+      const req = {
+        headers: {},
+      } as unknown as Request;
+
+      await expect(controller.verify(req)).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('deve lançar UnauthorizedException se o token for inválido', async () => {
+      const req = {
+        headers: { authorization: 'InvalidToken' },
+      } as unknown as Request;
+
+      await expect(controller.verify(req)).rejects.toThrow(UnauthorizedException);
+    });
+  });
+
+  describe('me', () => {
+    it('deve retornar os dados do usuário se token estiver no header', async () => {
+      const req = {
+        headers: { authorization: 'Bearer token-header' },
+        cookies: {},
+      } as unknown as Request;
+
+      authService.verifyToken = jest.fn().mockResolvedValue({
+        nome: 'Hero',
+        email: 'hero@email.com',
+        acesso: 'ADMIN',
+      });
+
+      const result = await controller.me(req);
+
+      expect(authService.verifyToken).toHaveBeenCalledWith('token-header');
+      expect(result).toEqual({
+        nome: 'Hero',
+        email: 'hero@email.com',
+        acesso: 'ADMIN',
+        token: 'token-header',
+      });
+    });
+
+    it('deve retornar os dados do usuário se token estiver no cookie', async () => {
+      const req = {
+        headers: {},
+        cookies: { refresh_token: 'token-cookie' },
+      } as unknown as Request;
+
+      authService.verifyToken = jest.fn().mockResolvedValue({
+        nome: 'HeroCookie',
+        email: 'cookie@hero.com',
+        acesso: 'USER',
+      });
+
+      const result = await controller.me(req);
+
+      expect(authService.verifyToken).toHaveBeenCalledWith('token-cookie');
+      expect(result).toEqual({
+        nome: 'HeroCookie',
+        email: 'cookie@hero.com',
+        acesso: 'USER',
+        token: 'token-cookie',
+      });
+    });
+
+    it('deve lançar UnauthorizedException se não houver token no header nem no cookie', async () => {
+      const req = {
+        headers: {},
+        cookies: {},
+      } as unknown as Request;
+
+      await expect(controller.me(req)).rejects.toThrow(UnauthorizedException);
     });
   });
 });

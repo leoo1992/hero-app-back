@@ -20,7 +20,7 @@ export class AuthService {
     const senhaValida = await bcrypt.compare(dto.senha, hero.senha);
 
     if (!senhaValida) throw new UnauthorizedException('Email ou senha inválidos');
-
+    
     const payload = {
       sub: hero.id,
       email: hero.email,
@@ -31,7 +31,7 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-    return { accessToken, refreshToken, nome: hero.nome, acesso: hero.acesso };
+    return { accessToken, refreshToken, nome: hero.nome, acesso: hero.acesso, email: hero.email };
   }
 
   async refreshTokens(refreshToken: string) {
@@ -60,6 +60,7 @@ export class AuthService {
   async verifyToken(token: string) {
     try {
       const payload = this.jwtService.verify(token);
+      
       return {
         nome: payload.nome,
         email: payload.email,

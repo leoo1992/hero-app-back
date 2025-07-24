@@ -7,6 +7,7 @@ import {
   UnauthorizedException,
   Logger,
   BadRequestException,
+  Get,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { LoginDto } from '../dtos/login.dto';
@@ -37,7 +38,7 @@ export class AuthController {
     },
   })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-    const { accessToken, refreshToken, nome, acesso } = await this.authService.login(dto);
+    const { accessToken, refreshToken, nome, acesso, email } = await this.authService.login(dto);
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
@@ -51,6 +52,7 @@ export class AuthController {
       refresh_token: refreshToken,
       nome,
       acesso,
+      email,
     };
   }
 
@@ -110,7 +112,10 @@ export class AuthController {
 
   private async handleRefreshToken(req: Request): Promise<void> {
     const refreshToken = req.cookies['refresh_token'];
-    if (!refreshToken) return;
+    if (!refreshToken) {
+      this.logger.warn('Nenhum token de acesso encontrado no cabeçalho Authorization');
+      return;
+    }
 
     try {
       const payload = this.authService.decodeToken(refreshToken);
@@ -127,7 +132,7 @@ export class AuthController {
   private async handleAccessToken(req: Request): Promise<void> {
     const authHeader = req.headers['authorization'];
 
-    if (!authHeader || typeof authHeader !== 'string' || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader) {
       this.logger.warn('Nenhum token de acesso encontrado no cabeçalho Authorization');
       return;
     }
@@ -176,5 +181,37 @@ export class AuthController {
     }
     const token = authHeader.replace('Bearer ', '').trim();
     return this.authService.verifyToken(token);
+  }
+
+  @Get('me')
+  @ApiOperation({ summary: 'Retorna dados do usuário autenticado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Dados do usuário retornados com sucesso',
+    schema: {
+      example: {
+        nome: 'Admin',
+        email: 'admin@heroforce.com',
+        acesso: 'ADMIN',
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Token inválido ou ausente' })
+  async me(@Req() req: Request) {
+    const authHeader = req.headers['authorization'];
+    let token: string | undefined;
+
+    if (authHeader?.startsWith('Bearer ')) {
+      token = authHeader.replace('Bearer ', '').trim();
+    } else if (req.cookies?.refresh_token) {
+      token = req.cookies['refresh_token'];
+    }
+
+    if (!token) {
+      throw new UnauthorizedException('Token ausente');
+    }
+
+    const userData = await this.authService.verifyToken(token);
+    return { ...userData, token };
   }
 }

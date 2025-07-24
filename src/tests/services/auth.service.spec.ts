@@ -44,6 +44,7 @@ describe('AuthService', () => {
         refreshToken: 'refreshToken',
         nome: mockHero.nome,
         acesso: mockHero.acesso,
+        email: mockHero.email,
       });
     });
 
@@ -109,6 +110,38 @@ describe('AuthService', () => {
 
       const result = authService.decodeToken('badToken');
       expect(result).toBeNull();
+    });
+  });
+
+  describe('verifyToken', () => {
+    it('deve retornar os dados do payload se o token for válido', async () => {
+      const payload = {
+        nome: 'Test Hero',
+        email: 'test@hero.com',
+        acesso: 'ADMIN',
+      };
+
+      mockJwtService.verify.mockReturnValue(payload);
+
+      const result = await authService.verifyToken('valid-token');
+
+      expect(mockJwtService.verify).toHaveBeenCalledWith('valid-token');
+      expect(result).toEqual({
+        nome: payload.nome,
+        email: payload.email,
+        acesso: payload.acesso,
+      });
+    });
+
+    it('deve lançar UnauthorizedException se o token for inválido', async () => {
+      const loggerSpy = jest.spyOn(authService['logger'], 'warn').mockImplementation(() => {});
+
+      mockJwtService.verify.mockImplementation(() => {
+        throw new Error('Token inválido');
+      });
+
+      await expect(authService.verifyToken('invalid-token')).rejects.toThrow(UnauthorizedException);
+      expect(loggerSpy).toHaveBeenCalledWith('Token inválido', expect.any(Error));
     });
   });
 });
