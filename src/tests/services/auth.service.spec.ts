@@ -7,6 +7,7 @@ const mockHero = {
   email: 'hero@example.com',
   nome: 'Super Hero',
   senha: bcrypt.hashSync('senha123', 10),
+  acesso: 'admin',
 };
 
 const mockHeroService = {
@@ -38,7 +39,12 @@ describe('AuthService', () => {
 
       const result = await authService.login({ email: mockHero.email, senha: 'senha123' });
 
-      expect(result).toEqual({ accessToken: 'accessToken', refreshToken: 'refreshToken' });
+      expect(result).toEqual({
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken',
+        nome: mockHero.nome,
+        acesso: mockHero.acesso,
+      });
     });
 
     it('deve lançar UnauthorizedException se email for inválido', async () => {

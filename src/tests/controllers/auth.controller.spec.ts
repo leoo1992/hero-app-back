@@ -50,6 +50,8 @@ describe('AuthController', () => {
       authService.login.mockResolvedValue({
         accessToken: 'access123',
         refreshToken: 'refresh123',
+        nome: 'Super Hero',
+        acesso: 'ADMIN',
       });
 
       const resultado = await controller.login(dto, res);
@@ -59,6 +61,8 @@ describe('AuthController', () => {
       expect(resultado).toEqual({
         access_token: 'access123',
         refresh_token: 'refresh123',
+        nome: 'Super Hero',
+        acesso: 'ADMIN',
       });
     });
 
