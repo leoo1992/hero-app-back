@@ -148,6 +148,8 @@ export class HeroService {
     if (dto.nome) hero.nome = dto.nome;
     if (dto.senha) hero.senha = await bcrypt.hash(dto.senha, 10);
     if (dto.hero !== undefined) hero.hero = dto.hero;
+    if (dto.acesso !== undefined) hero.acesso = dto.acesso;
+
     hero.atualizado = new Date();
 
     if (dto.projects && dto.projects.length > 0) {

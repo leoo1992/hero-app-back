@@ -12,6 +12,11 @@ import { ProjectDto } from './project.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { HeroType } from './hero.dto';
 
+export enum AcessoType {
+  HERO = 'HERO',
+  ADMIN = 'ADMIN',
+}
+
 export class UpdateHeroDto {
   @ApiPropertyOptional({ description: 'Nome do herói', example: 'Tony Stark' })
   @IsOptional()
@@ -36,6 +41,15 @@ export class UpdateHeroDto {
   @IsOptional()
   @IsEnum(HeroType, { message: 'Hero deve ser um dos heróis válidos' })
   hero?: HeroType;
+
+  @ApiPropertyOptional({
+    description: 'Tipo de acesso do herói',
+    enum: AcessoType,
+    example: AcessoType.HERO,
+  })
+  @IsOptional()
+  @IsEnum(AcessoType, { message: 'Acesso deve ser HERO ou ADMIN' })
+  acesso?: AcessoType;
 
   @ApiPropertyOptional({
     description: 'Lista de projetos do herói',
