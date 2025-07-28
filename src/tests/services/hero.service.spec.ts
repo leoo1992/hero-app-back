@@ -7,6 +7,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { ProjectDto } from 'src/dtos/project.dto';
+import { HeroType } from 'src/dtos/hero.dto';
 
 describe('HeroService', () => {
   let service: HeroService;
@@ -55,7 +56,7 @@ describe('HeroService', () => {
           nome: 'Herói',
           email: 'email@exemplo.com',
           senha: 'senha',
-          hero: 'heroi',
+          hero: 'Batman' as HeroType,
         }),
       ).rejects.toBeInstanceOf(ConflictException);
     });
@@ -111,7 +112,7 @@ describe('HeroService', () => {
         nome: 'Herói',
         email: 'email@exemplo.com',
         senha: 'senha',
-        hero: 'heroi',
+        hero: 'Batman' as HeroType,
         projects: [{ nome: 'projeto1' }] as ProjectDto[],
       };
 
@@ -250,7 +251,7 @@ describe('HeroService', () => {
         email: 'novo@exemplo.com',
         nome: 'Nome Novo',
         senha: 'novasenha',
-        hero: 'heroiNovo',
+        hero: 'Batman' as HeroType,
         projects: [
           {
             nome: 'p1',
@@ -365,7 +366,7 @@ describe('HeroService', () => {
         email: 'novo@exemplo.com',
         nome: 'Nome Novo',
         senha: 'novaSenha',
-        hero: 'heroiNovo',
+        hero: 'Batman' as HeroType,
         projects: [],
       };
 
@@ -397,7 +398,7 @@ describe('HeroService', () => {
         email: 'novo@exemplo.com',
         nome: 'Nome Novo',
         senha: 'novaSenha',
-        hero: 'heroiNovo',
+        hero: 'Batman' as HeroType,
       };
 
       jest.spyOn(bcrypt, 'hash').mockImplementation(() => Promise.resolve('senhaHash'));

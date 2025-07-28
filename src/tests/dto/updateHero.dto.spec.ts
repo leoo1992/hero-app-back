@@ -2,6 +2,7 @@ import { validate } from 'class-validator';
 import { EstatisticasDto, ProjectDto } from 'src/dtos/project.dto';
 import { UpdateHeroDto } from 'src/dtos/updateHero.dto';
 import { plainToInstance } from 'class-transformer';
+import { HeroType } from 'src/dtos/hero.dto';
 
 describe('UpdateHeroDto', () => {
   it('deve validar com dados válidos', async () => {
@@ -9,7 +10,7 @@ describe('UpdateHeroDto', () => {
     dto.nome = 'Tony Stark';
     dto.email = 'tony@stark.com';
     dto.senha = 'senha123';
-    dto.hero = 'Homem de Ferro';
+    dto.hero = 'Homem de Ferro' as HeroType;
 
     const estatisticas = new EstatisticasDto();
     estatisticas.agilidade = 90;
@@ -72,7 +73,7 @@ describe('UpdateHeroDto', () => {
       nome: 'Natasha Romanoff',
       email: 'natasha@shield.com',
       senha: 'senha123',
-      hero: 'Viúva Negra',
+      hero: 'Batman' as HeroType,
       projects: [
         {
           nome: 'Missão Secreta',

@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { HeroDto } from '../../dtos/hero.dto';
+import { HeroDto, HeroType } from '../../dtos/hero.dto';
 import { EstatisticasDto, ProjectDto } from '../../dtos/project.dto';
 import { plainToInstance } from 'class-transformer';
 
@@ -31,7 +31,7 @@ describe('HeroDto', () => {
     dto.nome = 'Lucas Silva';
     dto.email = 'lucas@email.com';
     dto.senha = '12345678';
-    dto.hero = 'Super Herói';
+    dto.hero = 'Batman' as HeroType;
 
     const estatisticas = new EstatisticasDto();
     estatisticas.agilidade = 80;
@@ -82,16 +82,6 @@ describe('HeroDto', () => {
 
     const errors = await validate(dto);
     expect(errors.some((e) => e.property === 'senha')).toBe(true);
-  });
-
-  it('deve aceitar hero opcionalmente', async () => {
-    const dto = new HeroDto();
-    dto.nome = 'Lucas Silva';
-    dto.email = 'lucas@email.com';
-    dto.senha = '12345678';
-
-    const errors = await validate(dto);
-    expect(errors.some((e) => e.property === 'hero')).toBe(false);
   });
 
   it('deve falhar se projects não for um array', async () => {
@@ -172,7 +162,7 @@ describe('HeroDto', () => {
       nome: 'Lucas Silva',
       email: 'lucas@email.com',
       senha: '12345678',
-      hero: 'Super Herói',
+      hero: 'Batman' as HeroType,
       projects: [
         {
           nome: 'Projeto 1',

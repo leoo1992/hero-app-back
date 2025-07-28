@@ -1,7 +1,16 @@
-import { IsEmail, IsOptional, IsString, MinLength, ValidateNested, IsArray } from 'class-validator';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  MinLength,
+  ValidateNested,
+  IsArray,
+  IsEnum,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ProjectDto } from './project.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { HeroType } from './hero.dto';
 
 export class UpdateHeroDto {
   @ApiPropertyOptional({ description: 'Nome do herói', example: 'Tony Stark' })
@@ -19,10 +28,14 @@ export class UpdateHeroDto {
   @MinLength(6)
   senha?: string;
 
-  @ApiPropertyOptional({ description: 'Nome do herói (alias)', example: 'Homem de Ferro' })
+  @ApiPropertyOptional({
+    description: 'Nome do herói (alias)',
+    example: 'Homem de Ferro',
+    enum: HeroType,
+  })
   @IsOptional()
-  @IsString()
-  hero?: string;
+  @IsEnum(HeroType, { message: 'Hero deve ser um dos heróis válidos' })
+  hero?: HeroType;
 
   @ApiPropertyOptional({
     description: 'Lista de projetos do herói',

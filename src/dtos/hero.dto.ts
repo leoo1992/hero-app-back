@@ -7,9 +7,19 @@ import {
   IsOptional,
   IsArray,
   ValidateNested,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ProjectDto } from './project.dto';
+
+export enum HeroType {
+  SUPERMAN = 'Superman',
+  BATMAN = 'Batman',
+  MULHER_MARAVILHA = 'Mulher Maravilha',
+  HOMEM_DE_FERRO = 'Homem de Ferro',
+  CAPITAO_AMERICA = 'Capitão América',
+  PANTERA_NEGRA = 'Pantera Negra',
+}
 
 export class HeroDto {
   @ApiProperty({ example: 'Lucas Silva' })
@@ -28,9 +38,9 @@ export class HeroDto {
   senha: string;
 
   @ApiProperty({ required: false, example: 'Super Herói' })
-  @IsOptional()
+  @IsEnum(HeroType, { message: 'Hero deve ser um dos heróis válidos' })
   @IsString()
-  hero?: string;
+  hero?: HeroType;
 
   @ApiProperty({ type: [ProjectDto], required: false })
   @IsOptional()

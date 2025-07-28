@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Project } from './project.entity';
+import { HeroType } from 'src/dtos/hero.dto';
 
 @Entity('heros')
 export class Hero {
@@ -24,9 +25,9 @@ export class Hero {
   @Column({ length: 255 })
   senha: string;
 
-  @ApiProperty({ required: false })
-  @Column({ nullable: true })
-  hero?: string;
+  @ApiProperty({ enum: HeroType })
+  @Column({ type: 'enum', enum: HeroType })
+  hero: string;
 
   @ApiProperty({ enum: ['HERO', 'ADMIN'] })
   @Column({ default: 'HERO' })

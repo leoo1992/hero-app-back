@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HeroController } from '../../../src/controllers/hero.controller';
 import { HeroService } from '../../../src/services/hero.service';
 import { Hero } from '../../../src/entities/hero.entity';
-import { HeroDto } from '../../../src/dtos/hero.dto';
+import { HeroDto, HeroType } from '../../../src/dtos/hero.dto';
 import { UpdateHeroDto } from '../../../src/dtos/updateHero.dto';
 import { JwtBlacklistGuard } from '../../../src/guards/jwt-blacklist.guard';
 import { JwtBlacklistService } from '../../../src/services/jwt-blacklist.service';
@@ -50,7 +50,7 @@ describe('HeroController', () => {
         nome: 'Bruce Wayne',
         email: 'batman@gotham.com',
         senha: 'batsenha',
-        hero: 'Batman',
+        hero: 'Batman' as HeroType,
         projects: [],
       };
 

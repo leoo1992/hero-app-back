@@ -26,6 +26,7 @@ export class AuthService {
       email: hero.email,
       nome: hero.nome,
       acesso: hero.acesso,
+      hero: hero.hero,
     };
 
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
@@ -38,7 +39,7 @@ export class AuthService {
     try {
       const payload = this.jwtService.verify(refreshToken);
 
-      const newPayload = { sub: payload.sub, email: payload.email, nome: payload.nome };
+      const newPayload = { sub: payload.sub, email: payload.email, nome: payload.nome, hero: payload.hero };
       const accessToken = this.jwtService.sign(newPayload, { expiresIn: '1h' });
       const newRefreshToken = this.jwtService.sign(newPayload, { expiresIn: '7d' });
 
@@ -62,9 +63,11 @@ export class AuthService {
       const payload = this.jwtService.verify(token);
       
       return {
+        id: payload.sub,
         nome: payload.nome,
         email: payload.email,
         acesso: payload.acesso,
+        hero: payload.hero
       };
     } catch (error) {
       this.logger.warn('Token inválido', error);
