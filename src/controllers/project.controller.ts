@@ -13,7 +13,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ProjectService } from '../services/project.service';
-import { ProjectDto } from '../dtos/project.dto';
+import { ProjectDto } from '../dtos/project/project.dto';
 import { Project } from '../entities/project.entity';
 import { JwtBlacklistGuard } from '../guards/jwt-blacklist.guard';
 import { Roles } from '../decorators/roles.decorator';
@@ -26,7 +26,8 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { ProjectProgressDto } from 'src/dtos/projectProgress.dto';
+import { ProjectProgressDto } from 'src/dtos/project/projectProgress.dto';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 @ApiTags('Projetos')
 @ApiBearerAuth()
@@ -36,7 +37,7 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  @Roles('ADMIN')
+  @Roles(AcessoType.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   @ApiOperation({ summary: 'Cria um novo projeto (ADMIN)' })
   @ApiResponse({ status: 201, description: 'Projeto criado com sucesso', type: Project })
@@ -45,7 +46,7 @@ export class ProjectController {
   }
 
   @Get()
-  @Roles('ADMIN')
+  @Roles(AcessoType.ADMIN)
   @ApiOperation({ summary: 'Buscar projetos com filtros (ADMIN)' })
   @ApiQuery({ name: 'status', required: false })
   @ApiQuery({ name: 'responsavelId', required: false, description: 'ID do herói responsável' })
@@ -93,7 +94,7 @@ export class ProjectController {
   }
 
   @Put(':id')
-  @Roles('ADMIN')
+  @Roles(AcessoType.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   @ApiOperation({ summary: 'Atualiza um projeto por ID (ADMIN)' })
   @ApiParam({ name: 'id', type: Number, description: 'ID do projeto' })
@@ -106,7 +107,7 @@ export class ProjectController {
   }
 
   @Delete(':id')
-  @Roles('ADMIN')
+  @Roles(AcessoType.ADMIN)
   @ApiOperation({ summary: 'Remove um projeto por ID (ADMIN)' })
   @ApiParam({ name: 'id', type: Number, description: 'ID do projeto' })
   @ApiResponse({ status: 204, description: 'Projeto removido' })

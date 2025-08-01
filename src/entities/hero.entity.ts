@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Project } from './project.entity';
-import { HeroType } from 'src/dtos/hero.dto';
+import { HeroType } from 'src/@types/hero/heroType';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 @Entity('heros')
 export class Hero {
   constructor() {
-    this.acesso = 'HERO';
+    this.acesso = AcessoType.HERO;
   }
 
   @ApiProperty()
@@ -27,11 +28,11 @@ export class Hero {
 
   @ApiProperty({ enum: HeroType })
   @Column({ type: 'enum', enum: HeroType })
-  hero: string;
+  hero: HeroType;
 
-  @ApiProperty({ enum: ['HERO', 'ADMIN'] })
-  @Column({ default: 'HERO' })
-  acesso: 'HERO' | 'ADMIN';
+  @ApiProperty({ enum: AcessoType, example: AcessoType.HERO })
+  @Column({ type: 'enum', enum: AcessoType, default: AcessoType.HERO })
+  acesso: AcessoType;
 
   @ApiProperty({ type: Date, required: false })
   @Column({ type: 'timestamp', nullable: true })

@@ -1,9 +1,11 @@
-import { JwtPayload, JwtStrategy } from '../../strategies/jwt.strategy';
+import { JwtStrategy } from '../../strategies/jwt.strategy';
 import { ConfigService } from '@nestjs/config';
 import { JwtBlacklistService } from '../../services/jwt-blacklist.service';
 import { UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { Request } from 'express';
+import { AcessoType } from 'src/@types/hero/acessoType';
+import { JwtPayload } from 'src/@types/jwt/jwtPayload';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
@@ -14,7 +16,7 @@ describe('JwtStrategy', () => {
     sub: 1,
     email: 'teste@hero.com',
     nome: 'Hero Teste',
-    acesso: 'HERO',
+    acesso: AcessoType.HERO,
     iat: Math.floor(Date.now() / 1000),
     exp: Math.floor((Date.now() + 10000) / 1000),
   };

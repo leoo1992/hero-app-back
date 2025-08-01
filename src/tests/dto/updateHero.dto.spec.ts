@@ -1,8 +1,10 @@
 import { validate } from 'class-validator';
-import { EstatisticasDto, ProjectDto } from 'src/dtos/project.dto';
-import { UpdateHeroDto } from 'src/dtos/updateHero.dto';
+import { ProjectDto } from 'src/dtos/project/project.dto';
+import { UpdateHeroDto } from 'src/dtos/hero/updateHero.dto';
 import { plainToInstance } from 'class-transformer';
-import { HeroType } from 'src/dtos/hero.dto';
+import { HeroType } from 'src/@types/hero/heroType';
+import { EstatisticasDto } from 'src/dtos/project/estatisticas.dto';
+import { ProjectStatus } from 'src/@types/project/projectStatus';
 
 describe('UpdateHeroDto', () => {
   it('deve validar com dados válidos', async () => {
@@ -10,7 +12,7 @@ describe('UpdateHeroDto', () => {
     dto.nome = 'Tony Stark';
     dto.email = 'tony@stark.com';
     dto.senha = 'senha123';
-    dto.hero = 'Homem de Ferro' as HeroType;
+    dto.hero = HeroType.HOMEM_DE_FERRO;
 
     const estatisticas = new EstatisticasDto();
     estatisticas.agilidade = 90;
@@ -23,7 +25,7 @@ describe('UpdateHeroDto', () => {
     const project = new ProjectDto();
     project.nome = 'Projeto Iniciativa Vingadores';
     project.descricao = 'Reunir os heróis mais poderosos da Terra';
-    project.status = 'PENDENTE';
+    project.status = ProjectStatus.PENDENTE;
     project.estatisticas = estatisticas;
     project.responsavel = 1;
 
@@ -73,7 +75,7 @@ describe('UpdateHeroDto', () => {
       nome: 'Natasha Romanoff',
       email: 'natasha@shield.com',
       senha: 'senha123',
-      hero: 'Batman' as HeroType,
+      hero: HeroType.BATMAN,
       projects: [
         {
           nome: 'Missão Secreta',

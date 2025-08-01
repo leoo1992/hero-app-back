@@ -10,17 +10,9 @@ import {
 } from 'typeorm';
 import { Type } from 'class-transformer';
 import { Hero } from './hero.entity';
-
-export type TProjectStatus = 'PENDENTE' | 'ANDAMENTO' | 'CONCLUIDO';
-
-export interface TProjectEstatisticas {
-  agilidade: number;
-  encantamento: number;
-  eficiencia: number;
-  excelencia: number;
-  transparencia: number;
-  ambicao: number;
-}
+import { ProjectStatus } from 'src/@types/project/projectStatus';
+import { ProjectEstatisticas } from 'src/@types/project/projectEstatisticas';
+import { ProjectEstatisticasDto } from 'src/dtos/project/projectEstatisticas.dto';
 
 @Entity('projects')
 export class Project {
@@ -36,31 +28,13 @@ export class Project {
   @Column({ type: 'text' })
   descricao: string;
 
-  @ApiProperty({ enum: ['PENDENTE', 'ANDAMENTO', 'CONCLUIDO'] })
-  @Column({ type: 'varchar', length: 20 })
-  status: TProjectStatus;
+  @ApiProperty({ enum: ProjectStatus, example: ProjectStatus.PENDENTE })
+  @Column({ type: 'enum', enum: ProjectStatus, default: ProjectStatus.PENDENTE })
+  status: ProjectStatus;
 
-  @ApiProperty({
-    type: 'object',
-    example: {
-      agilidade: 80,
-      encantamento: 90,
-      eficiencia: 85,
-      excelencia: 75,
-      transparencia: 70,
-      ambicao: 95,
-    },
-    properties: {
-      agilidade: { type: 'number' },
-      encantamento: { type: 'number' },
-      eficiencia: { type: 'number' },
-      excelencia: { type: 'number' },
-      transparencia: { type: 'number' },
-      ambicao: { type: 'number' },
-    },
-  })
+  @ApiProperty({ type: ProjectEstatisticasDto })
   @Column({ type: 'json' })
-  estatisticas: TProjectEstatisticas;
+  estatisticas: ProjectEstatisticas;
 
   @ApiProperty({
     type:

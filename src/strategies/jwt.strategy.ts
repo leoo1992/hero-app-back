@@ -4,15 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { JwtBlacklistService } from 'src/services/jwt-blacklist.service';
 import { Request } from 'express';
-
-export type JwtPayload = {
-  sub: number;
-  email: string;
-  nome: string;
-  acesso: 'ADMIN' | 'HERO';
-  iat: number;
-  exp: number;
-};
+import { JwtPayload } from 'src/@types/jwt/jwtPayload';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

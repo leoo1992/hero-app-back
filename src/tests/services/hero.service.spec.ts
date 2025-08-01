@@ -2,12 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HeroService } from 'src/services/hero.service';
 import { DeepPartial, Repository } from 'typeorm';
 import { Hero } from 'src/entities/hero.entity';
-import { Project, TProjectEstatisticas, TProjectStatus } from 'src/entities/project.entity';
+import { Project } from 'src/entities/project.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
-import { ProjectDto } from 'src/dtos/project.dto';
-import { HeroType } from 'src/dtos/hero.dto';
+import { ProjectDto } from 'src/dtos/project/project.dto';
+import { HeroType } from 'src/@types/hero/heroType';
+import { ProjectEstatisticas } from 'src/@types/project/projectEstatisticas';
+import { ProjectStatus } from 'src/@types/project/projectStatus';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 describe('HeroService', () => {
   let service: HeroService;
@@ -71,7 +74,7 @@ describe('HeroService', () => {
           email: hero.email || 'email@default.com',
           senha: hero.senha || 'hashdefault',
           hero: hero.hero,
-          acesso: hero.acesso || 'HERO',
+          acesso: hero.acesso || AcessoType.HERO,
           criado: hero.criado || new Date(),
           atualizado: hero.atualizado || new Date(),
           projects: hero.projects || [],
@@ -82,8 +85,8 @@ describe('HeroService', () => {
       projectRepo.save.mockImplementation(
         async (input: DeepPartial<Project>): Promise<DeepPartial<Project> & Project> => {
           const buildEstatisticas = (
-            estatisticas?: DeepPartial<TProjectEstatisticas>,
-          ): TProjectEstatisticas => ({
+            estatisticas?: DeepPartial<ProjectEstatisticas>,
+          ): ProjectEstatisticas => ({
             agilidade: 80,
             encantamento: 90,
             eficiencia: 85,
@@ -97,7 +100,7 @@ describe('HeroService', () => {
             id: p.id ?? 1,
             nome: p.nome ?? 'Projeto Teste',
             descricao: p.descricao ?? 'Descrição Teste',
-            status: p.status ?? 'PENDENTE',
+            status: p.status ?? ProjectStatus.PENDENTE,
             estatisticas: buildEstatisticas(p.estatisticas),
             responsavel: p.responsavel ?? ({} as any),
             criado: p.criado instanceof Date ? p.criado : new Date(),
@@ -219,6 +222,32 @@ describe('HeroService', () => {
   });
 
   describe('atualizar', () => {
+    it('deve atualizar o campo acesso se fornecido no DTO', async () => {
+      const heroiExistente = {
+        id: 1,
+        email: 'antigo@exemplo.com',
+        nome: 'Nome Antigo',
+        senha: 'hashantigo',
+        hero: 'heroiAntigo',
+        acesso: AcessoType.HERO,
+        atualizado: new Date(),
+        projects: [],
+      } as any;
+
+      heroRepo.findOne.mockResolvedValueOnce(heroiExistente);
+      heroRepo.findOne.mockResolvedValueOnce(null);
+
+      heroRepo.save.mockImplementation(async (hero) => hero as Hero);
+
+      const dto = {
+        acesso: AcessoType.ADMIN,
+      };
+
+      const resultado = await service.update(1, dto);
+
+      expect(resultado.acesso).toBe(AcessoType.ADMIN);
+    });
+
     it('deve atualizar os campos do herói e salvar', async () => {
       const heroiExistente = {
         id: 1,
@@ -240,7 +269,7 @@ describe('HeroService', () => {
           email: hero.email || 'email@default.com',
           senha: hero.senha || 'hashdefault',
           hero: hero.hero,
-          acesso: hero.acesso || 'HERO',
+          acesso: hero.acesso || AcessoType.HERO,
           criado: hero.criado || new Date(),
           atualizado: hero.atualizado || new Date(),
           projects: hero.projects || [],
@@ -256,7 +285,7 @@ describe('HeroService', () => {
           {
             nome: 'p1',
             descricao: 'Projeto de teste',
-            status: 'PENDENTE' as TProjectStatus,
+            status: ProjectStatus.PENDENTE,
             estatisticas: {
               agilidade: 90,
               encantamento: 90,
@@ -278,8 +307,8 @@ describe('HeroService', () => {
             input: DeepPartial<Project> | DeepPartial<Project>[],
           ): Promise<(DeepPartial<Project> & Project) | (DeepPartial<Project> & Project)[]> => {
             const buildEstatisticas = (
-              estatisticas?: DeepPartial<TProjectEstatisticas>,
-            ): TProjectEstatisticas => ({
+              estatisticas?: DeepPartial<ProjectEstatisticas>,
+            ): ProjectEstatisticas => ({
               agilidade: estatisticas?.agilidade ?? 80,
               encantamento: estatisticas?.encantamento ?? 90,
               eficiencia: estatisticas?.eficiencia ?? 85,
@@ -292,7 +321,7 @@ describe('HeroService', () => {
               id: p.id ?? i,
               nome: p.nome ?? 'Projeto Teste',
               descricao: p.descricao ?? 'Descrição Teste',
-              status: p.status ?? 'PENDENTE',
+              status: p.status ?? ProjectStatus.PENDENTE,
               estatisticas: buildEstatisticas(p.estatisticas),
               responsavel: p.responsavel ?? ({} as any),
               criado: new Date(),
@@ -337,8 +366,8 @@ describe('HeroService', () => {
             {
               nome: 'p1',
               descricao: 'Teste',
-              status: 'PENDENTE',
-              estatisticas: {} as TProjectEstatisticas,
+              status: ProjectStatus.PENDENTE,
+              estatisticas: {} as ProjectEstatisticas,
               responsavel: 0,
             },
           ],

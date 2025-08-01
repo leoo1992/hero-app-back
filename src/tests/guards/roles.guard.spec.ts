@@ -1,5 +1,6 @@
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { AcessoType } from 'src/@types/hero/acessoType';
 import { RolesGuard } from 'src/guards/roles.guard';
 
 describe('RolesGuard', () => {
@@ -39,11 +40,11 @@ describe('RolesGuard', () => {
   });
 
   it('deve bloquear acesso quando usuário não tem role necessário', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['ADMIN']);
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([AcessoType.ADMIN]);
 
     mockContext['request'] = {
       user: {
-        acesso: 'USER',
+        acesso: AcessoType.HERO,
       },
     };
 
@@ -51,11 +52,11 @@ describe('RolesGuard', () => {
   });
 
   it('deve liberar acesso quando usuário tem role necessário', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['ADMIN']);
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue([AcessoType.ADMIN]);
 
     mockContext['request'] = {
       user: {
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
       },
     };
 

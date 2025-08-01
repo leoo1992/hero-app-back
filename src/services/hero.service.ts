@@ -7,10 +7,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Hero } from '../entities/hero.entity';
-import { HeroDto } from '../dtos/hero.dto';
+import { HeroDto } from '../dtos/hero/hero.dto';
 import * as bcrypt from 'bcrypt';
 import { Project } from 'src/entities/project.entity';
-import { UpdateHeroDto } from 'src/dtos/updateHero.dto';
+import { UpdateHeroDto } from 'src/dtos/hero/updateHero.dto';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 @Injectable()
 export class HeroService {
@@ -41,7 +42,7 @@ export class HeroService {
       email: dto.email.toLowerCase().trim(),
       senha: senhaCriptografada,
       hero: dto.hero,
-      acesso: 'HERO',
+      acesso: AcessoType.HERO,
       criado: new Date(),
       atualizado: new Date(),
     });
@@ -147,8 +148,8 @@ export class HeroService {
 
     if (dto.nome) hero.nome = dto.nome;
     if (dto.senha) hero.senha = await bcrypt.hash(dto.senha, 10);
-    if (dto.hero !== undefined) hero.hero = dto.hero;
-    if (dto.acesso !== undefined) hero.acesso = dto.acesso;
+    if (dto.hero) hero.hero = dto.hero;
+    if (dto.acesso) hero.acesso = dto.acesso;
 
     hero.atualizado = new Date();
 
@@ -158,7 +159,7 @@ export class HeroService {
       );
       await this.projectRepository.save(projetosCriados);
 
-      hero.projects = [...(hero.projects), ...projetosCriados];
+      hero.projects = [...hero.projects, ...projetosCriados];
     }
 
     return this.heroRepository.save(hero);

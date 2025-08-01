@@ -2,9 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProjectService } from 'src/services/project.service';
 import { HeroService } from 'src/services/hero.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Project, TProjectStatus } from 'src/entities/project.entity';
+import { Project } from 'src/entities/project.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { ProjectDto } from 'src/dtos/project.dto';
+import { ProjectDto } from 'src/dtos/project/project.dto';
+import { ProjectStatus } from 'src/@types/project/projectStatus';
 
 describe('ProjectService', () => {
   let service: ProjectService;
@@ -75,7 +76,7 @@ describe('ProjectService', () => {
     it('deve lançar BadRequestException se nome estiver vazio', async () => {
       const dto: ProjectDto = {
         nome: '',
-        status: 'PENDENTE',
+        status: ProjectStatus.PENDENTE,
         responsavel: 1,
         descricao: 'desc',
         estatisticas: {
@@ -114,7 +115,7 @@ describe('ProjectService', () => {
       await expect(
         service.create({
           nome: 'Projeto',
-          status: 'PENDENTE',
+          status: ProjectStatus.PENDENTE,
           descricao: 'desc',
           estatisticas: {
             agilidade: 0,
@@ -134,7 +135,7 @@ describe('ProjectService', () => {
       await expect(
         service.create({
           nome: 'Projeto',
-          status: 'PENDENTE',
+          status: ProjectStatus.PENDENTE,
           responsavel: 1,
           descricao: 'Descrição qualquer',
           estatisticas: {
@@ -152,7 +153,7 @@ describe('ProjectService', () => {
     it('deve criar projeto corretamente', async () => {
       const dto: ProjectDto = {
         nome: 'Projeto Teste',
-        status: 'PENDENTE',
+        status: ProjectStatus.PENDENTE,
         responsavel: 1,
         descricao: 'Descrição',
         estatisticas: {
@@ -192,7 +193,7 @@ describe('ProjectService', () => {
     it('deve criar projeto mesmo sem descrição (usa fallback)', async () => {
       const dto: ProjectDto = {
         nome: 'Projeto Sem Descrição',
-        status: 'PENDENTE',
+        status: ProjectStatus.PENDENTE,
         responsavel: 1,
         descricao: '',
         estatisticas: {
@@ -236,7 +237,7 @@ describe('ProjectService', () => {
 
     it('deve retornar projetos com filtros aplicados', async () => {
       const filtros = {
-        status: 'PENDENTE',
+        status: ProjectStatus.PENDENTE,
         responsavelId: 2,
         nome: 'Teste',
         descricao: 'Descrição',
@@ -326,7 +327,7 @@ describe('ProjectService', () => {
         id: 1,
         nome: 'Antigo',
         descricao: 'Desc antiga',
-        status: 'PENDENTE',
+        status: ProjectStatus.PENDENTE,
         estatisticas: {},
         responsavel: { id: 1 },
         atualizado: new Date(),
@@ -339,7 +340,7 @@ describe('ProjectService', () => {
       const dto: Partial<ProjectDto> = {
         nome: 'Novo Nome',
         descricao: 'Nova Desc',
-        status: 'ANDAMENTO' as TProjectStatus,
+        status: 'ANDAMENTO' as ProjectStatus,
         estatisticas: {
           agilidade: 100,
           encantamento: 0,
@@ -391,7 +392,7 @@ describe('ProjectService', () => {
         id: 1,
         nome: 'Projeto',
         descricao: 'Antiga',
-        status: 'PENDENTE',
+        status: ProjectStatus.PENDENTE,
         estatisticas: {},
         responsavel: { id: 1 },
         atualizado: new Date(),
@@ -409,7 +410,7 @@ describe('ProjectService', () => {
     it('deve lançar BadRequestException se status estiver em branco ao atualizar', async () => {
       projectRepo.findOne.mockResolvedValue({} as Project);
 
-      await expect(service.update(1, { status: '   ' as TProjectStatus })).rejects.toBeInstanceOf(
+      await expect(service.update(1, { status: '   ' as ProjectStatus })).rejects.toBeInstanceOf(
         BadRequestException,
       );
     });
@@ -417,14 +418,14 @@ describe('ProjectService', () => {
     it('deve atualizar status corretamente mesmo com espaços em branco', async () => {
       const projetoExistente = {
         id: 1,
-        status: 'PENDENTE',
+        status: ProjectStatus.PENDENTE,
         atualizado: new Date(),
       } as any;
 
       projectRepo.findOne.mockResolvedValue(projetoExistente);
       projectRepo.save.mockImplementation((p: any) => Promise.resolve(p));
 
-      const resultado = await service.update(1, { status: ' CONCLUIDO ' as TProjectStatus });
+      const resultado = await service.update(1, { status: ' CONCLUIDO ' as ProjectStatus });
 
       expect(resultado.status).toBe('CONCLUIDO');
     });

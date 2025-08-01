@@ -1,7 +1,10 @@
 import { validate } from 'class-validator';
-import { HeroDto, HeroType } from '../../dtos/hero.dto';
-import { EstatisticasDto, ProjectDto } from '../../dtos/project.dto';
+import { HeroDto } from '../../dtos/hero/hero.dto';
+import { ProjectDto } from '../../dtos/project/project.dto';
 import { plainToInstance } from 'class-transformer';
+import { HeroType } from 'src/@types/hero/heroType';
+import { EstatisticasDto } from 'src/dtos/project/estatisticas.dto';
+import { ProjectStatus } from 'src/@types/project/projectStatus';
 
 describe('HeroDto', () => {
   it('deve validar com dados válidos', async () => {
@@ -31,7 +34,7 @@ describe('HeroDto', () => {
     dto.nome = 'Lucas Silva';
     dto.email = 'lucas@email.com';
     dto.senha = '12345678';
-    dto.hero = 'Batman' as HeroType;
+    dto.hero = HeroType.BATMAN;
 
     const estatisticas = new EstatisticasDto();
     estatisticas.agilidade = 80;
@@ -44,7 +47,7 @@ describe('HeroDto', () => {
     const project = new ProjectDto();
     project.nome = 'Projeto 1';
     project.descricao = 'Descrição do projeto';
-    project.status = 'PENDENTE';
+    project.status = ProjectStatus.PENDENTE;
     project.estatisticas = estatisticas;
     project.responsavel = 1;
 
@@ -162,7 +165,7 @@ describe('HeroDto', () => {
       nome: 'Lucas Silva',
       email: 'lucas@email.com',
       senha: '12345678',
-      hero: 'Batman' as HeroType,
+      hero: HeroType.BATMAN,
       projects: [
         {
           nome: 'Projeto 1',

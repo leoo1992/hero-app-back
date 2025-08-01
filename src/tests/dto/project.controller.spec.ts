@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ProjectStatus } from 'src/@types/project/projectStatus';
 import { ProjectController } from 'src/controllers/project.controller';
 import { Project } from 'src/entities/project.entity';
 import { JwtBlacklistGuard } from 'src/guards/jwt-blacklist.guard';
@@ -20,7 +21,7 @@ describe('ProjectController', () => {
     id: 1,
     nome: 'Projeto Alpha',
     descricao: 'Um projeto secreto',
-    status: 'ANDAMENTO',
+    status: ProjectStatus.ANDAMENTO,
     responsavel: { id: 1 } as any,
     estatisticas: {
       agilidade: 0,

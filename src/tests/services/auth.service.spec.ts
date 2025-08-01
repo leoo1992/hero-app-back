@@ -1,13 +1,14 @@
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from '../../services/auth.service';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 const mockHero = {
   id: 1,
   email: 'hero@example.com',
   nome: 'Super Hero',
   senha: bcrypt.hashSync('senha123', 10),
-  acesso: 'admin',
+  acesso: AcessoType.ADMIN,
 };
 
 const mockHeroService = {
@@ -118,7 +119,7 @@ describe('AuthService', () => {
       const payload = {
         nome: 'Test Hero',
         email: 'test@hero.com',
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
       };
 
       mockJwtService.verify.mockReturnValue(payload);

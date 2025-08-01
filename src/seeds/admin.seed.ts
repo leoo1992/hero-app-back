@@ -4,7 +4,8 @@ import { Hero } from '../entities/hero.entity';
 import { Project } from '../entities/project.entity';
 import * as bcrypt from 'bcrypt';
 import { Logger } from '@nestjs/common';
-import { HeroType } from 'src/dtos/hero.dto';
+import { HeroType } from 'src/@types/hero/heroType';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -30,7 +31,7 @@ export async function seedAdmin() {
       admin.nome = 'Admin';
       admin.email = 'admin@heroforce.com';
       admin.senha = await bcrypt.hash('admin123', 10);
-      admin.acesso = 'ADMIN';
+      admin.acesso = AcessoType.ADMIN;
       admin.hero = HeroType.BATMAN;
       admin.criado = new Date();
       admin.atualizado = new Date();
@@ -47,7 +48,7 @@ export async function seedAdmin() {
       hero.nome = 'Leonardo Santos';
       hero.email = 'santos-contato@hotmail.com.br';
       hero.senha = await bcrypt.hash('123456', 10);
-      hero.acesso = 'HERO';
+      hero.acesso = AcessoType.HERO;
       hero.hero = HeroType.SUPERMAN;
       hero.criado = new Date();
       hero.atualizado = new Date();
@@ -57,7 +58,6 @@ export async function seedAdmin() {
     } else {
       logger.log('Usuário HERO já existe.');
     }
-
   } catch (error) {
     logger.error('Erro ao executar seedAdmin:', error);
   } finally {

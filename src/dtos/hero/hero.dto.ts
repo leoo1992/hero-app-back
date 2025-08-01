@@ -10,16 +10,8 @@ import {
   IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ProjectDto } from './project.dto';
-
-export enum HeroType {
-  SUPERMAN = 'Superman',
-  BATMAN = 'Batman',
-  MULHER_MARAVILHA = 'Mulher Maravilha',
-  HOMEM_DE_FERRO = 'Homem de Ferro',
-  CAPITAO_AMERICA = 'Capitão América',
-  PANTERA_NEGRA = 'Pantera Negra',
-}
+import { ProjectDto } from '../project/project.dto';
+import { HeroType } from 'src/@types/hero/heroType';
 
 export class HeroDto {
   @ApiProperty({ example: 'Lucas Silva' })

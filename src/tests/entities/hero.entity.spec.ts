@@ -3,11 +3,13 @@ import { Project } from 'src/entities/project.entity';
 import { plainToInstance } from 'class-transformer';
 import 'reflect-metadata';
 import { getMetadataArgsStorage } from 'typeorm';
+import { AcessoType } from 'src/@types/hero/acessoType';
+import { HeroType } from 'src/@types/hero/heroType';
 
 describe('Hero Entity', () => {
   it('deve instanciar com valor padrão "HERO" para acesso', () => {
     const hero = new Hero();
-    expect(hero.acesso).toBe('HERO');
+    expect(hero.acesso).toBe(AcessoType.HERO);
   });
 
   it('deve aceitar todos os campos definidos manualmente', () => {
@@ -16,13 +18,13 @@ describe('Hero Entity', () => {
     hero.nome = 'Diana Prince';
     hero.email = 'diana@amazon.com';
     hero.senha = 'senha123';
-    hero.hero = 'Mulher Maravilha';
-    hero.acesso = 'ADMIN';
+    hero.hero = HeroType.MULHER_MARAVILHA;
+    hero.acesso = AcessoType.ADMIN;
     hero.criado = new Date('2024-01-01T12:00:00Z');
     hero.atualizado = new Date('2024-06-01T12:00:00Z');
 
     expect(hero.nome).toBe('Diana Prince');
-    expect(hero.acesso).toBe('ADMIN');
+    expect(hero.acesso).toBe(AcessoType.ADMIN);
     expect(hero.criado.toISOString()).toBe('2024-01-01T12:00:00.000Z');
     expect(hero.atualizado.toISOString()).toBe('2024-06-01T12:00:00.000Z');
   });

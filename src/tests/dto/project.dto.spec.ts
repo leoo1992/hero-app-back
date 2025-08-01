@@ -1,6 +1,6 @@
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { ProjectDto } from 'src/dtos/project.dto';
+import { ProjectDto } from 'src/dtos/project/project.dto';
 
 describe('ProjectDto', () => {
   const validPayload = {

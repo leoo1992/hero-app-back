@@ -14,6 +14,7 @@ import { LoginDto } from '../dtos/login.dto';
 import { Request, Response } from 'express';
 import { JwtBlacklistService } from '../services/jwt-blacklist.service';
 import { ApiTags, ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -170,7 +171,7 @@ export class AuthController {
       example: {
         nome: 'Lucas Silva',
         email: 'lucas@email.com',
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
       },
     },
   })
@@ -192,7 +193,7 @@ export class AuthController {
       example: {
         nome: 'Admin',
         email: 'admin@heroforce.com',
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
       },
     },
   })

@@ -11,13 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { HeroService } from '../services/hero.service';
-import { HeroDto } from '../dtos/hero.dto';
+import { HeroDto } from '../dtos/hero/hero.dto';
 import { Hero } from '../entities/hero.entity';
-import { UpdateHeroDto } from 'src/dtos/updateHero.dto';
+import { UpdateHeroDto } from 'src/dtos/hero/updateHero.dto';
 import { JwtBlacklistGuard } from '../guards/jwt-blacklist.guard';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 @ApiTags('Heróis')
 @ApiBearerAuth('access-token')
@@ -33,7 +34,7 @@ export class HeroController {
   }
 
   @Get()
-  @Roles('ADMIN')
+  @Roles(AcessoType.ADMIN)
   @UseGuards(JwtBlacklistGuard, RolesGuard)
   @ApiOperation({ summary: 'Listar todos os heróis com filtros (ADMIN)' })
   @ApiResponse({ status: 200, description: 'Lista de heróis.', type: [Hero] })
@@ -61,7 +62,7 @@ export class HeroController {
   }
 
   @Put(':id')
-  @Roles('ADMIN')
+  @Roles(AcessoType.ADMIN)
   @UseGuards(JwtBlacklistGuard, RolesGuard)
   @ApiOperation({ summary: 'Atualizar herói por ID (ADMIN)' })
   @ApiResponse({ status: 200, description: 'Herói atualizado.', type: Hero })
@@ -70,7 +71,7 @@ export class HeroController {
   }
 
   @Delete(':id')
-  @Roles('ADMIN')
+  @Roles(AcessoType.ADMIN)
   @UseGuards(JwtBlacklistGuard, RolesGuard)
   @ApiOperation({ summary: 'Excluir herói por ID (ADMIN)' })
   @ApiResponse({ status: 204, description: 'Herói excluído com sucesso.' })

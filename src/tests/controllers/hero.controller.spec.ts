@@ -2,10 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HeroController } from '../../../src/controllers/hero.controller';
 import { HeroService } from '../../../src/services/hero.service';
 import { Hero } from '../../../src/entities/hero.entity';
-import { HeroDto, HeroType } from '../../../src/dtos/hero.dto';
-import { UpdateHeroDto } from '../../../src/dtos/updateHero.dto';
+import { HeroDto } from '../../dtos/hero/hero.dto';
+import { UpdateHeroDto } from '../../dtos/hero/updateHero.dto';
 import { JwtBlacklistGuard } from '../../../src/guards/jwt-blacklist.guard';
 import { JwtBlacklistService } from '../../../src/services/jwt-blacklist.service';
+import { HeroType } from 'src/@types/hero/heroType';
 
 describe('HeroController', () => {
   let controller: HeroController;
@@ -50,7 +51,7 @@ describe('HeroController', () => {
         nome: 'Bruce Wayne',
         email: 'batman@gotham.com',
         senha: 'batsenha',
-        hero: 'Batman' as HeroType,
+        hero: HeroType.BATMAN,
         projects: [],
       };
 
@@ -68,7 +69,7 @@ describe('HeroController', () => {
     it('deve listar heróis com filtros', async () => {
       const filtros = {
         status: 'ATIVO',
-        hero: 'Superman',
+        hero: HeroType.SUPERMAN,
         email: 'super@krypton.com',
         nome: 'Clark Kent',
         id: 5,

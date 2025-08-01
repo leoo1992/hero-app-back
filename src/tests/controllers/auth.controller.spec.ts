@@ -4,6 +4,7 @@ import { AuthService } from '../../../src/services/auth.service';
 import { JwtBlacklistService } from '../../../src/services/jwt-blacklist.service';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Response, Request } from 'express';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -52,7 +53,7 @@ describe('AuthController', () => {
         refreshToken: 'refresh123',
         nome: 'Super Hero',
         email: 'superhero@hero.com',
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
       });
 
       const resultado = await controller.login(dto, res);
@@ -63,7 +64,7 @@ describe('AuthController', () => {
         access_token: 'access123',
         refresh_token: 'refresh123',
         nome: 'Super Hero',
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
         email: 'superhero@hero.com',
       });
     });
@@ -223,7 +224,7 @@ describe('AuthController', () => {
       authService.verifyToken = jest.fn().mockResolvedValue({
         nome: 'Usuário',
         email: 'user@example.com',
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
       });
 
       const result = await controller.verify(req);
@@ -232,7 +233,7 @@ describe('AuthController', () => {
       expect(result).toEqual({
         nome: 'Usuário',
         email: 'user@example.com',
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
       });
     });
 
@@ -263,7 +264,7 @@ describe('AuthController', () => {
       authService.verifyToken = jest.fn().mockResolvedValue({
         nome: 'Hero',
         email: 'hero@email.com',
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
       });
 
       const result = await controller.me(req);
@@ -272,7 +273,7 @@ describe('AuthController', () => {
       expect(result).toEqual({
         nome: 'Hero',
         email: 'hero@email.com',
-        acesso: 'ADMIN',
+        acesso: AcessoType.ADMIN,
         token: 'token-header',
       });
     });
@@ -286,7 +287,7 @@ describe('AuthController', () => {
       authService.verifyToken = jest.fn().mockResolvedValue({
         nome: 'HeroCookie',
         email: 'cookie@hero.com',
-        acesso: 'USER',
+        acesso: AcessoType.HERO,
       });
 
       const result = await controller.me(req);
@@ -295,7 +296,7 @@ describe('AuthController', () => {
       expect(result).toEqual({
         nome: 'HeroCookie',
         email: 'cookie@hero.com',
-        acesso: 'USER',
+        acesso: AcessoType.HERO,
         token: 'token-cookie',
       });
     });

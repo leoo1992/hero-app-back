@@ -1,11 +1,16 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project, TProjectStatus } from '../entities/project.entity';
-import { ProjectDto } from '../dtos/project.dto';
+import { Project } from '../entities/project.entity';
+import { ProjectDto } from '../dtos/project/project.dto';
 import { HeroService } from './hero.service';
+import { ProjectStatus } from 'src/@types/project/projectStatus';
 
-const validStatuses: TProjectStatus[] = ['PENDENTE', 'ANDAMENTO', 'CONCLUIDO'];
+const validStatuses: ProjectStatus[] = [
+  ProjectStatus.PENDENTE,
+  ProjectStatus.ANDAMENTO,
+  ProjectStatus.CONCLUIDO,
+];
 
 @Injectable()
 export class ProjectService {
@@ -164,7 +169,7 @@ export class ProjectService {
     }
 
     if (dto.status !== undefined) {
-      const trimmedStatus = dto.status.trim() as TProjectStatus;
+      const trimmedStatus = dto.status.trim() as ProjectStatus;
 
       if (!trimmedStatus) {
         throw new BadRequestException('Status não pode ser vazio');

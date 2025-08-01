@@ -8,14 +8,10 @@ import {
   IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ProjectDto } from './project.dto';
+import { ProjectDto } from '../project/project.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { HeroType } from './hero.dto';
-
-export enum AcessoType {
-  HERO = 'HERO',
-  ADMIN = 'ADMIN',
-}
+import { HeroType } from 'src/@types/hero/heroType';
+import { AcessoType } from 'src/@types/hero/acessoType';
 
 export class UpdateHeroDto {
   @ApiPropertyOptional({ description: 'Nome do herói', example: 'Tony Stark' })

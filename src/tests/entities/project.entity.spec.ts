@@ -1,8 +1,9 @@
 import { Hero } from 'src/entities/hero.entity';
-import { Project, TProjectStatus } from '../../entities/project.entity';
+import { Project } from '../../entities/project.entity';
 import 'reflect-metadata';
 import { getMetadataArgsStorage } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
+import { ProjectStatus } from 'src/@types/project/projectStatus';
 
 describe('Entidade Project', () => {
   it('deve criar uma instância com as propriedades corretamente', () => {
@@ -14,7 +15,7 @@ describe('Entidade Project', () => {
     project.id = 10;
     project.nome = 'Projeto X';
     project.descricao = 'Descrição do projeto X';
-    project.status = 'ANDAMENTO' as TProjectStatus;
+    project.status = 'ANDAMENTO' as ProjectStatus;
     project.estatisticas = {
       agilidade: 80,
       encantamento: 90,
