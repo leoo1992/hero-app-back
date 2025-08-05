@@ -62,9 +62,8 @@ export class HeroController {
   }
 
   @Put(':id')
-  @Roles(AcessoType.ADMIN)
   @UseGuards(JwtBlacklistGuard, RolesGuard)
-  @ApiOperation({ summary: 'Atualizar herói por ID (ADMIN)' })
+  @ApiOperation({ summary: 'Atualizar herói por ID' })
   @ApiResponse({ status: 200, description: 'Herói atualizado.', type: Hero })
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateHeroDto): Promise<Hero> {
     return this.heroService.update(id, dto);
