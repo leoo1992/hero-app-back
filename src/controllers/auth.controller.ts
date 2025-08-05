@@ -39,7 +39,8 @@ export class AuthController {
     },
   })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-    const { accessToken, refreshToken, nome, acesso, email } = await this.authService.login(dto);
+    const { accessToken, refreshToken, nome, acesso, email, usuario } =
+      await this.authService.login(dto);
 
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
@@ -54,6 +55,7 @@ export class AuthController {
       nome,
       acesso,
       email,
+      usuario,
     };
   }
 
@@ -99,22 +101,28 @@ export class AuthController {
     },
   })
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    await this.handleRefreshToken(req);
+    await this.handleAccessToken(req);
+
     res.clearCookie('refresh_token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
     });
 
-    await this.handleRefreshToken(req);
-    await this.handleAccessToken(req);
-
     return { message: 'Logout realizado com sucesso' };
   }
 
   private async handleRefreshToken(req: Request): Promise<void> {
     const refreshToken = req.cookies['refresh_token'];
+    const cookies = req.cookies;
+    if (!cookies) {
+      this.logger.warn('Cookies não encontrados na requisição.');
+      return;
+    }
+
     if (!refreshToken) {
-      this.logger.warn('Nenhum token de acesso encontrado no cabeçalho Authorization');
+      this.logger.warn('Refresh token não encontrado nos cookies.');
       return;
     }
 
@@ -126,7 +134,7 @@ export class AuthController {
         await this.jwtBlacklistService.add(refreshToken);
       }
     } catch (error) {
-      this.logger.warn('Falha ao decodificar refresh token no logout', error);
+      this.logger.warn('Erro ao decodificar refresh token no logout:', error);
     }
   }
 

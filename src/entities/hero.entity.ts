@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Project } from './project.entity';
 import { HeroType } from 'src/@types/hero/heroType';
 import { AcessoType } from 'src/@types/hero/acessoType';
+import { Exclude } from 'class-transformer';
 
 @Entity('heros')
 export class Hero {
@@ -23,6 +24,7 @@ export class Hero {
   email: string;
 
   @ApiProperty()
+  @Exclude()
   @Column({ length: 255 })
   senha: string;
 

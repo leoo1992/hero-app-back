@@ -7,6 +7,7 @@ import { seedAdmin } from './seeds/admin.seed';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap(): Promise<void> {
   const logger = new Logger();
@@ -19,7 +20,8 @@ async function bootstrap(): Promise<void> {
   const configService = app.get(ConfigService);
 
   app.setGlobalPrefix('api');
-
+  
+  app.use(cookieParser());
   app.enableCors({
     origin: configService.get('CLIENT_ORIGIN'),
     credentials: true,
