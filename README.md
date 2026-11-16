@@ -69,7 +69,7 @@ Configure `ADMIN_EMAIL` e `ADMIN_PASSWORD` no `.env` antes de executar:
 npm run seed
 ```
 
-A seed aborta se as variáveis estiverem ausentes ou se a senha tiver menos de 12 caracteres. A senha é persistida com bcrypt. Não reutilize credenciais antigas.
+A seed aborta se as variáveis estiverem ausentes ou se a senha tiver menos de 12 caracteres. A senha é persistida com bcrypt.
 
 ## Testes e qualidade
 
