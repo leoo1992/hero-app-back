@@ -1,16 +1,16 @@
 import { DataSource } from 'typeorm';
-import 'dotenv/config';
+import 'reflect-metadata';
 import { Hero } from '../entities/hero.entity';
 import { Project } from '../entities/project.entity';
 import * as bcrypt from 'bcrypt';
 import { Logger } from '@nestjs/common';
-import { HeroType } from 'src/@types/hero/heroType';
-import { AcessoType } from 'src/@types/hero/acessoType';
+import { HeroType } from '../@types/hero/heroType';
+import { AcessoType } from '../@types/hero/acessoType';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT!),
+  port: Number(process.env.DB_PORT),
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
@@ -18,49 +18,49 @@ export const AppDataSource = new DataSource({
   entities: [Hero, Project],
 });
 
-export const logger = new Logger('SeedAdmin');
+export const logger = new Logger('AdminSeed');
 
 export async function seedAdmin() {
+  const email = process.env.ADMIN_EMAIL?.trim();
+  const password = process.env.ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    throw new Error(
+      'Admin seed aborted: configure ADMIN_EMAIL and ADMIN_PASSWORD before running npm run seed.',
+    );
+  }
+
+  if (password.length < 12) {
+    throw new Error('Admin seed aborted: ADMIN_PASSWORD must contain at least 12 characters.');
+  }
+
   try {
     await AppDataSource.initialize();
     const heroRepository = AppDataSource.getRepository(Hero);
+    const adminExists = await heroRepository.findOneBy({ email });
 
-    const adminExists = await heroRepository.findOneBy({ email: 'admin@heroforce.com' });
-    if (!adminExists) {
-      const admin = new Hero();
-      admin.nome = 'Admin';
-      admin.email = 'admin@heroforce.com';
-      admin.senha = await bcrypt.hash('admin123', 10);
-      admin.acesso = AcessoType.ADMIN;
-      admin.hero = HeroType.BATMAN;
-      admin.criado = new Date();
-      admin.atualizado = new Date();
-
-      await heroRepository.save(admin);
-      logger.log('Usuário ADMIN criado.');
-    } else {
-      logger.log('Usuário ADMIN já existe.');
+    if (adminExists) {
+      logger.log('Admin account already exists; no changes made.');
+      return;
     }
 
-    const heroExists = await heroRepository.findOneBy({ email: 'santos-contato@hotmail.com.br' });
-    if (!heroExists) {
-      const hero = new Hero();
-      hero.nome = 'Leonardo Santos';
-      hero.email = 'santos-contato@hotmail.com.br';
-      hero.senha = await bcrypt.hash('123456', 10);
-      hero.acesso = AcessoType.HERO;
-      hero.hero = HeroType.SUPERMAN;
-      hero.criado = new Date();
-      hero.atualizado = new Date();
+    const admin = new Hero();
+    admin.nome = 'Administrator';
+    admin.email = email;
+    admin.senha = await bcrypt.hash(password, 12);
+    admin.acesso = AcessoType.ADMIN;
+    admin.hero = HeroType.BATMAN;
+    admin.criado = new Date();
+    admin.atualizado = new Date();
 
-      await heroRepository.save(hero);
-      logger.log('Usuário HERO criado.');
-    } else {
-      logger.log('Usuário HERO já existe.');
-    }
+    await heroRepository.save(admin);
+    logger.log('Admin account created successfully.');
   } catch (error) {
-    logger.error('Erro ao executar seedAdmin:', error);
+    logger.error('Unable to execute admin seed.', error instanceof Error ? error.stack : String(error));
+    throw error;
   } finally {
-    await AppDataSource.destroy();
+    if (AppDataSource.isInitialized) {
+      await AppDataSource.destroy();
+    }
   }
 }
