@@ -67,7 +67,7 @@ Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env` before running:
 npm run seed
 ```
 
-The seed aborts if either variable is missing or the password is shorter than 12 characters. Passwords are stored using bcrypt. Do not reuse old credentials.
+The seed aborts if either variable is missing or the password is shorter than 12 characters. Passwords are stored using bcrypt.
 
 ## Tests and quality
 
