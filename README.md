@@ -1,143 +1,98 @@
-# 🦸‍♂️ Hero App Backend (hero-app-back)
+[English version](README.en.md)
 
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+# Hero App — Backend
 
-Uma aplicação backend robusta e escalável para o aplicativo Hero. Construída com foco em segurança, performance e facilidade de manutenção.
-Este projeto fornece a infraestrutura de dados e APIs necessárias para alimentar a aplicação front-end.
+API REST para uma aplicação de gestão de heróis, projetos e batalhas. O backend centraliza autenticação, regras de negócio e persistência para o [Hero App Frontend](https://github.com/leoo1992/hero-app-front).
 
-## 🚀 Tecnologias
+## Problema e solução
 
-Este projeto utiliza as seguintes tecnologias:
+Organiza usuários com papéis distintos, cadastro de heróis, projetos associados e operações de batalha em uma API documentada. A autenticação usa JWT; rotas podem ser protegidas por papel de acesso e há limitação de requisições.
 
-* **Framework:** [NestJS](https://nestjs.com/)
-* **Banco de Dados:** [PostgreSQL](https://www.postgresql.org/)
-* **ORM:** [TypeORM](https://typeorm.io/)
-* **Autenticação:** [JWT](https://jwt.io/)
-* **Documentação:** [Swagger](https://swagger.io/)
-* **Container:** [Docker](https://www.docker.com/)
-* **Linguagem:** TypeScript
-* **Proteção contra ataques de força bruta**
+## Demo e imagens
 
-**Pré-requisitos:**
-   * Docker e Docker Compose instalados e funcionando.
-   * Node.js 20+
-   * npm v9+
+- **API em produção:** <!-- PREENCHER: demo -->
+- **Swagger local:** http://localhost:3001/api/docs
+- **Screenshots:** <!-- PREENCHER: screenshots da API/Swagger -->
 
-## ⚙️ Instalação e Configuração
+## Stack
 
-1. **Clone o repositório:**
+- Node.js 20+, TypeScript e NestJS 11
+- PostgreSQL, TypeORM e bcrypt
+- JWT, Passport, Swagger e throttling
+- Docker Compose, Jest e ESLint
+
+## Arquitetura
+
+```mermaid
+flowchart TD
+  Client[Web client] --> API[NestJS controllers]
+  API --> Guards[JWT and role guards]
+  Guards --> Services[Application services]
+  Services --> ORM[TypeORM]
+  ORM --> DB[(PostgreSQL)]
+  API --> Docs[Swagger UI]
+```
+
+**Decisões:** NestJS organiza módulos, controllers e serviços; PostgreSQL mantém os dados relacionais; TypeORM integra entidades e persistência; JWT evita sessão de servidor; bcrypt armazena hashes de senha. O Docker Compose simplifica o ambiente local.
+
+## Como executar
+
+### Local
+
+Pré-requisitos: Node.js 20+, npm e PostgreSQL.
 
 ```bash
-git clone https://github.com/leoo1992/hero-app-back
+git clone https://github.com/leoo1992/hero-app-back.git
 cd hero-app-back
-```
-
-2. **Instale as dependências:**
-
-```bash
 npm install
-```
-
-3. **Configure as variáveis de ambiente:**
-
-Copie o arquivo de exemplo e preencha os valores locais. Gere um segredo JWT forte e exclusivo; não reutilize credenciais de produção.
-
-```bash
 cp .env.example .env
-```
-
-No Windows PowerShell:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-O arquivo `.env` contém credenciais e é ignorado pelo Git. Nunca o versione nem publique seus valores. O arquivo `.env.example` contém apenas nomes de variáveis e valores fictícios.
-
-## 🏃 Executando o Projeto
-
-1. **Execute o servidor:**
-
-```bash
 npm run start:dev
 ```
 
-2. **Construindo e executando o banco com Docker Compose:**
+No PowerShell, use `Copy-Item .env.example .env`. Edite o `.env` com a conexão PostgreSQL e gere um `JWT_SECRET` aleatório e exclusivo.
+
+### Docker
 
 ```bash
 docker compose up -d
+npm install
+npm run start:dev
 ```
 
-## 📁 Estrutura de Arquivos
+O Compose inicia o banco; a API é executada pelo Node local. A documentação Swagger fica em `http://localhost:3001/api/docs`.
 
-```
-hero-app-back/
-├── src/
-├── Insomnia.yaml
-├── README.md
-├── docker-compose.yml
-├── .env.example
-├── .gitignore
-├── .prettierrc
-├── package-lock.json
-├── package.json
-├── tsconfig.build.json
-└── tsconfig.json
+### Seed administrativo
+
+Configure `ADMIN_EMAIL` e `ADMIN_PASSWORD` no `.env` antes de executar:
+
+```bash
+npm run seed
 ```
 
-## Estrutura base de Arquivos
+A seed aborta se as variáveis estiverem ausentes ou se a senha tiver menos de 12 caracteres. A senha é persistida com bcrypt. Não reutilize credenciais antigas.
 
-```
-src/
-├── controllers/        // Controladores das rotas da API
-├── decorators/         // Decoradores de códigos
-├── dtos/               // DTOs
-├── entities/           // Entidades
-├── guards/             // Guards
-├── modules/            // Módulos de dados
-├── seeds/              // Alimentação inicial do banco (ADMIN)
-├── services/           // Lógica de negócios
-├── strategies/         // Estratégias utilizadas
-└── tests/              // Testes realizados
+## Testes e qualidade
+
+```bash
+npm run build
+npm test -- --runInBand
+npm run format
 ```
 
-## ✨ Recursos
+O projeto configura Jest em `jest.config.ts`; o comando de formatação usa Prettier nos arquivos TypeScript de `src`. Não há script `lint` declarado no `package.json`.
 
-- ✅ Autenticação JWT
-- ✅ CRUD completo para heróis
-- ✅ Sistema de batalhas entre heróis
-- ✅ Relatórios e estatísticas
-- ✅ Documentação de API com Swagger
-- ✅ Testes automatizados
-- ✅ Migrações de banco de dados
+## Segurança e configuração
 
----
+- Nunca versione `.env`; o repositório ignora arquivos de ambiente e mantém apenas `.env.example`.
+- `JWT_SECRET`, senha do banco e credenciais administrativas devem ser únicas e mantidas fora do Git.
+- Credenciais administrativas não possuem valor padrão no código.
 
-## 📚 Documentação da API
+## Limitações e próximos passos
 
-A documentação da API está disponível via Swagger UI após iniciar o servidor:
+- Adicionar pipeline de testes de integração com PostgreSQL.
+- Revisar migrações e desabilitar `synchronize` em produção.
+- Publicar uma URL de demonstração e capturas reais da documentação.
 
-http://localhost:3001/api/docs
+## Licença
 
-| Método | Endpoint              | Descrição                    |
-| ------ | --------------------- | ---------------------------- |
-| POST   | `/auth/login`         | Autenticação de usuário      |
-| GET    | `/heroes`             | Listar todos os heróis       |
-| POST   | `/heroes`             | Criar um novo herói          |
-| GET    | `/heroes/:id`         | Obter detalhes de um herói   |
-| PUT    | `/heroes/:id`         | Atualizar um herói           |
-| DELETE | `/heroes/:id`         | Excluir um herói             |
-| POST   | `/battles`            | Registrar uma nova batalha   |
-| GET    | `/reports/hero-stats` | Obter estatísticas de heróis |
-
-A aplicação utiliza `@Roles()` para proteger rotas com base no papel do usuário. Exemplo:
-
-```typescript
-@Roles('ADMIN', 'HERO')
-@Get()
-findAll() {
-  // ...
-}
-```
-
-Desenvolvido por Leonardo Santos.
+MIT.
