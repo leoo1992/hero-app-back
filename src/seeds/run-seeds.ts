@@ -6,10 +6,14 @@ const logger = new Logger('seed');
 async function runSeeds() {
   try {
     await seedAdmin();
-    logger.log('Seeds executadas com sucesso.');
-  } catch (err) {
-    logger.error('Erro ao rodar seeds:', err.stack || err.message);
+    logger.log('Seeds executed successfully.');
+  } catch (error) {
+    logger.error(
+      'Seed execution failed.',
+      error instanceof Error ? error.stack : String(error),
+    );
+    process.exitCode = 1;
   }
 }
 
-runSeeds();
+void runSeeds();
