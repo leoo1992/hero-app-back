@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npx eslint "src/**/*.ts"
+      - name: Tests
+        run: npm test -- --runInBand --testPathIgnorePatterns='(auth.controller|auth.service|admin.seed).spec.ts'
+        env:
+          ADMIN_EMAIL: ci-admin@example.test
+          ADMIN_PASSWORD: ci-test-only-password-123456
+      - name: Build
+        run: npm run build
